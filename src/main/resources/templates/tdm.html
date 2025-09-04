@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Tạo Danh Mục</title>
+
+	<!-- Tailwind CDN -->
+	<script src="https://cdn.tailwindcss.com"></script>
+
+	<!-- Google Font -->
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+	<style>
+		:root {
+			--card-bg: rgba(255, 255, 255, 0.9);
+		}
+
+		body {
+			font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+		}
+
+		/* subtle glass effect for card on large screens */
+		@media (min-width: 1024px) {
+			.glass {
+				background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.75));
+				backdrop-filter: blur(6px);
+			}
+		}
+	</style>
+</head>
+
+<body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen text-gray-800">
+
+	<main class="container mx-auto px-4 py-12">
+		<div class="max-w-3xl mx-auto">
+
+			<!-- Header / Breadcrumb -->
+			<nav class="text-sm mb-4" aria-label="Breadcrumb">
+				<ol class="flex items-center gap-2 text-gray-500">
+					<li><a href="http://localhost:8081/page/category" class="hover:underline">Danh mục</a></li>
+					<li>›</li>
+					<li class="text-gray-700 font-medium">Tạo danh mục mới</li>
+				</ol>
+			</nav>
+
+			<header class="mb-6">
+				<h1 class="text-2xl lg:text-3xl font-semibold text-gray-900">Tạo Danh Mục Mới</h1>
+				<p class="mt-2 text-sm text-gray-600">Thêm danh mục của bạn. Những trường có dấu <span
+						class="text-red-500">*</span> là bắt buộc.</p>
+			</header>
+
+			<!-- Card / Form -->
+			<section class="bg-white glass rounded-2xl shadow-lg p-6 lg:p-8">
+				<form id="categoryForm" class="space-y-6" novalidate>
+					<!-- name -->
+					<div>
+						<label for="categoryName" class="block text-sm font-medium text-gray-700 mb-2">
+							Tên danh mục <span class="text-red-500" aria-hidden="true">*</span>
+						</label>
+						<div class="relative">
+							<input id="categoryName" name="categoryName" type="text" inputmode="text" maxlength="80"
+								autocomplete="off"
+								class="peer w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+								placeholder="Ví dụ: Thiết kế, Công nghệ, Tin tức..."
+								aria-describedby="nameHelp nameError" required />
+							<!-- icon -->
+							<div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+								<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+									aria-hidden="true">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M16 3v4M8 3v4" />
+								</svg>
+							</div>
+						</div>
+						<p id="nameHelp" class="mt-2 text-xs text-gray-500">Tối đa 80 ký tự. Tránh trùng tên với danh
+							mục hiện có.</p>
+						<p id="nameError" class="mt-2 text-sm text-red-600 hidden" role="alert" aria-live="polite"></p>
+					</div>
+
+					<!-- description -->
+					<div>
+						<label for="categoryDescription" class="block text-sm font-medium text-gray-700 mb-2">Mô tả (tùy
+							chọn)</label>
+						<textarea id="categoryDescription" name="categoryDescription" rows="4" maxlength="300"
+							class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition resize-none"
+							placeholder="Mô tả ngắn gọn để người dùng hiểu mục đích của danh mục..."
+							aria-describedby="descHelp"></textarea>
+						<p id="descHelp" class="mt-2 text-xs text-gray-500">Tối đa 300 ký tự.</p>
+					</div>
+
+					<!-- actions -->
+					<div class="flex flex-col sm:flex-row gap-3">
+						<button id="submitBtn" type="submit"
+							class="flex-1 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition transform hover:-translate-y-0.5">
+							<svg id="btnIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+								aria-hidden="true">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+									d="M12 4v16m8-8H4"></path>
+							</svg>
+							<span id="btnText">Tạo danh mục</span>
+						</button>
+
+						<button type="button" id="resetBtn" onclick="resetFormUI()"
+							class="flex-1 inline-flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 font-medium py-3 rounded-lg hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 transition">
+							Đặt lại
+						</button>
+					</div>
+				</form>
+			</section>
+		</div>
+	</main>
+
+	<!-- Toast / Notification -->
+	<div id="toast"
+		class="fixed right-4 bottom-6 max-w-sm w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden hidden"
+		role="status" aria-live="polite">
+		<div class="p-4 flex items-start gap-3">
+			<div class="flex-shrink-0 mt-1">
+				<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+					aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+				</svg>
+			</div>
+			<div class="flex-1">
+				<p id="toastTitle" class="font-semibold text-gray-900">Thành công</p>
+				<p id="toastMessage" class="text-sm text-gray-600">Danh mục đã được lưu.</p>
+			</div>
+			<div class="flex-shrink-0">
+				<button id="toastClose" class="text-gray-400 hover:text-gray-600 focus:outline-none"
+					aria-label="Đóng thông báo">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		(function () {
+			const form = document.getElementById('categoryForm');
+			const nameInput = document.getElementById('categoryName');
+			const descInput = document.getElementById('categoryDescription');
+			const nameError = document.getElementById('nameError');
+			const submitBtn = document.getElementById('submitBtn');
+			const btnText = document.getElementById('btnText');
+			const btnIcon = document.getElementById('btnIcon');
+
+			const toast = document.getElementById('toast');
+			const toastTitle = document.getElementById('toastTitle');
+			const toastMessage = document.getElementById('toastMessage');
+			const toastClose = document.getElementById('toastClose');
+			let toastTimer = null;
+
+			const API_POST = 'http://localhost:8081/api/v1/user/category';
+
+			// ---------------- Utilities ----------------
+			function getCategories() {
+				try {
+					return JSON.parse(localStorage.getItem('categories') || '[]');
+				} catch (e) {
+					return [];
+				}
+			}
+
+			function saveCategory(cat) {
+				const list = getCategories();
+				list.push(cat);
+				localStorage.setItem('categories', JSON.stringify(list));
+			}
+
+			function showToast(title, message, autoHide = true) {
+				toastTitle.textContent = title;
+				toastMessage.textContent = message;
+				toast.classList.remove('hidden');
+				toast.classList.add('animate-[fadeIn_200ms_ease]');
+				if (toastTimer) clearTimeout(toastTimer);
+				if (autoHide) {
+					toastTimer = setTimeout(() => hideToast(), 3000);
+				}
+			}
+
+			function hideToast() {
+				toast.classList.add('hidden');
+				if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+			}
+
+			toastClose.addEventListener('click', hideToast);
+
+			function makeSlug(text) {
+				return text.toLowerCase()
+					.trim()
+					.normalize('NFKD')
+					.replace(/[\u0300-\u036f]/g, '') // remove diacritics
+					.replace(/[^a-z0-9\s-]/g, '')
+					.replace(/\s+/g, '-')
+					.replace(/-+/g, '-');
+			}
+
+			function setLoading(loading = true) {
+				submitBtn.disabled = loading;
+				if (loading) {
+					btnText.textContent = 'Đang lưu...';
+					btnIcon.innerHTML = '<animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"></animateTransform><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4M4 12H8" />';
+				} else {
+					btnText.textContent = 'Tạo danh mục';
+					btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>';
+				}
+			}
+
+			function clearValidation() {
+				nameError.textContent = '';
+				nameError.classList.add('hidden');
+				nameInput.setAttribute('aria-invalid', 'false');
+			}
+
+			function showValidation(message) {
+				nameError.textContent = message;
+				nameError.classList.remove('hidden');
+				nameInput.setAttribute('aria-invalid', 'true');
+			}
+
+			// Lấy token từ localStorage (thử nhiều key thông dụng)
+			function getTokenFromLocal() {
+				const TOKEN_KEYS = ['token', 'accessToken', 'access_token', 'authToken', 'auth_token', 'jwt', 'authorization', 'Authorization'];
+				for (const key of TOKEN_KEYS) {
+					const raw = localStorage.getItem(key);
+					if (!raw) continue;
+					try {
+						const parsed = JSON.parse(raw);
+						if (parsed && typeof parsed === 'object') {
+							if (parsed.token) return stripBearer(parsed.token);
+							if (parsed.accessToken) return stripBearer(parsed.accessToken);
+							if (parsed.access_token) return stripBearer(parsed.access_token);
+						}
+					} catch (err) {
+						// not json
+					}
+					if (raw.startsWith('Bearer ')) return raw.split(' ')[1];
+					return stripBearer(raw);
+				}
+				return null;
+			}
+			function stripBearer(s) {
+				if (!s) return s;
+				return s.startsWith('Bearer ') ? s.split(' ')[1] : s;
+			}
+
+			// ---------------- Form submit (gọi API) ----------------
+			form.addEventListener('submit', async function (e) {
+				e.preventDefault();
+				clearValidation();
+
+				const name = nameInput.value.trim();
+				const desc = descInput.value.trim();
+
+				// Client-side validations
+				if (!name) {
+					showValidation('Vui lòng nhập tên danh mục.');
+					nameInput.focus();
+					return;
+				}
+				if (name.length > 80) {
+					showValidation('Tên danh mục quá dài (tối đa 80 ký tự).');
+					nameInput.focus();
+					return;
+				}
+				if (desc.length > 300) {
+					showValidation('Mô tả quá dài (tối đa 300 ký tự).');
+					descInput.focus();
+					return;
+				}
+
+				// check duplicate local (tiện lợi, nhưng backend vẫn phải kiểm tra)
+				const existing = getCategories();
+				const dup = existing.find(c => c.name && c.name.toLowerCase() === name.toLowerCase());
+				if (dup) {
+					showValidation('Đã tồn tại danh mục cùng tên. Vui lòng chọn tên khác.');
+					nameInput.focus();
+					return;
+				}
+
+				// Lấy token
+				const token = getTokenFromLocal();
+				if (!token) {
+					showToast('Yêu cầu đăng nhập', 'Không tìm thấy token. Vui lòng đăng nhập để tiếp tục.', true);
+					setTimeout(() => { window.location.href = 'http://localhost:8081/page/login'; }, 1000);
+					return;
+				}
+
+				const payload = { name: name, description: desc };
+
+				try {
+					setLoading(true);
+					const res = await fetch(API_POST, {
+						method: 'POST',
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						},
+						body: JSON.stringify(payload)
+					});
+					if (res.status === 401) {
+						setLoading(false);
+						showToast('Phiên không hợp lệ', 'Token không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.', true);
+						setTimeout(() => { window.location.href = 'http://localhost:8081/page/login'; }, 1200);
+						return;
+					}
+					let data = null;
+					try { data = await res.json(); } catch (e) { /* ignore parse error */ }
+					if (res.ok && data && (data.status === 'SUCCESS' || data.message === 'SUCCESS')) {
+						try {
+							const newCat = {
+								id: data.data && data.data.categoryId ? data.data.categoryId : Date.now(),
+								name,
+								slug: makeSlug(name),
+								description: desc,
+								createdAt: new Date().toISOString()
+							};
+							saveCategory(newCat);
+						} catch (e) {}
+						setLoading(false);
+						showToast('Thành công', 'Danh mục đã được lưu vào cơ sở dữ liệu.');
+						setTimeout(() => { window.location.href = 'http://localhost:8081/page/category'; }, 900);
+						return;
+					} else {
+						setLoading(false);
+						const serverMsg = (data && (data.message || data.error)) ? (data.message || data.error) : `Server trả về lỗi (status ${res.status}).`;
+						showToast('Lỗi', serverMsg, true);
+						console.error('Category POST error:', res.status, data);
+						return;
+					}
+				} catch (err) {
+					setLoading(false);
+					showToast('Lỗi kết nối', 'Không thể kết nối tới server. Kiểm tra mạng hoặc server.', true);
+					console.error('Network error when posting category:', err);
+				}
+			});
+
+
+			window.resetFormUI = function () {
+				form.reset();
+				clearValidation();
+				hideToast();
+				nameInput.focus();
+			};
+
+			nameInput.addEventListener('input', () => {
+				if (nameInput.value.trim()) clearValidation();
+			});
+
+			// Accessibility: press Enter/Space on toast close
+			toastClose.addEventListener('keydown', (ev) => {
+				if (ev.key === 'Enter' || ev.key === ' ') {
+					ev.preventDefault();
+					hideToast();
+				}
+			});
+
+			// Autofocus first input on non-mobile
+			if (window.innerWidth > 640) {
+				nameInput.focus();
+			}
+		})();
+	</script>
+
+</body>
+
+</html>

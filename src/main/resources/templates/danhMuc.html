@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Quản Lý Danh Mục</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+		body {
+			font-family: 'Inter', sans-serif;
+			background: linear-gradient(135deg, #f0f4ff 0%, #e6e6ff 100%);
+			min-height: 100vh;
+		}
+
+		.category-card {
+			transition: all 0.3s ease;
+			border-left: 4px solid #4f46e5;
+		}
+
+		.category-card:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.15);
+		}
+
+		.btn-primary {
+			background: linear-gradient(to right, #4f46e5, #7c73e6);
+			transition: all 0.3s ease;
+		}
+
+		.btn-primary:hover {
+			background: linear-gradient(to right, #4338ca, #6d63d6);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+		}
+
+		.btn-secondary {
+			background: linear-gradient(to right, #64748b, #94a3b8);
+			transition: all 0.3s ease;
+		}
+
+		.btn-secondary:hover {
+			background: linear-gradient(to right, #475569, #7c8ba1);
+			transform: translateY(-2px);
+		}
+
+		.glass-effect {
+			background: rgba(255, 255, 255, 0.85);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+		}
+
+		.budget-positive {
+			color: #10b981;
+			font-weight: 600;
+		}
+
+		.budget-negative {
+			color: #ef4444;
+			font-weight: 600;
+		}
+
+		.budget-zero {
+			color: #6b7280;
+			font-weight: 600;
+		}
+
+		.budget-loading {
+			color: #3b82f6;
+			font-style: italic;
+		}
+
+		/* Responsive tweaks for the centered budget column */
+		.budget-column {
+			min-width: 160px;
+			max-width: 220px;
+		}
+
+		@media (max-width: 768px) {
+			.budget-column {
+				min-width: 120px;
+				max-width: 140px;
+			}
+		}
+	</style>
+</head>
+
+<body class="min-h-screen">
+	<!-- Nút HOME góc trái -->
+	<div class="fixed top-4 left-4 z-50">
+		<a href="http://localhost:8081/page/home"
+			class="flex items-center gap-2 bg-white shadow-md hover:shadow-lg transition p-2 rounded-full text-blue-600 font-semibold hover:bg-blue-50">
+			<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M3 12l2-2m0 0l7-7 7 7m-9 2v8m-4 4h16a2 2 0 002-2v-8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+			</svg>
+			HOME
+		</a>
+	</div>
+
+	<div class="container mx-auto px-4 py-8 max-w-5xl pt-16">
+		<!-- Header -->
+		<div class="text-center mb-10">
+			<h1 class="text-4xl font-bold text-gray-800 mb-3">Quản Lý Danh Mục</h1>
+			<p class="text-gray-600 max-w-2xl mx-auto">Tạo các mục quản lý chi tiêu của bạn</p>
+		</div>
+
+		<!-- Action Buttons - Only shown when categories exist -->
+		<div id="actionSection"
+			class="hidden mb-8 flex justify-between items-center glass-effect p-4 rounded-xl shadow-sm">
+			<button onclick="window.location.href='http://localhost:8081/page/create/category'"
+				class="btn-primary text-white font-semibold py-2.5 px-5 rounded-lg flex items-center">
+				<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+						d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+				</svg>
+				Thêm Danh Mục Mới
+			</button>
+			<div class="text-sm text-gray-600 bg-blue-50 py-1.5 px-3 rounded-lg">
+				Tổng số: <span id="totalCount" class="font-semibold text-blue-700">0</span> danh mục
+			</div>
+		</div>
+
+		<!-- Categories List -->
+		<div class="glass-effect rounded-xl shadow-lg overflow-hidden mb-8">
+			<div id="categoriesContainer">
+				<!-- Categories will be loaded here -->
+			</div>
+		</div>
+
+		<!-- Empty State / Loading / Error -->
+		<div id="emptyState" class="text-center py-16 px-4 glass-effect rounded-xl shadow-lg">
+			<div class="max-w-md mx-auto">
+				<div id="emptyIcon"
+					class="w-20 h-20 mx-auto mb-6 bg-blue-100 rounded-full flex items-center justify-center">
+					<svg class="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+						</path>
+					</svg>
+				</div>
+				<h3 id="emptyTitle" class="text-xl font-semibold text-gray-700 mb-3">Chưa có danh mục nào</h3>
+				<p id="emptyDesc" class="text-gray-500 mb-6">Bắt đầu bằng cách tạo danh mục đầu tiên để quản lý nội dung
+					của bạn</p>
+				<div id="emptyActions">
+					<button onclick="window.location.href='http://localhost:8081/page/create/category'"
+						class="btn-primary text-white font-semibold py-2.5 px-6 rounded-lg inline-flex items-center mx-auto">
+						<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+						</svg>
+						Tạo Danh Mục Đầu Tiên
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Edit Modal -->
+		<div id="editModal"
+			class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+			<div class="bg-white rounded-xl p-6 w-full max-w-md">
+				<h3 class="text-xl font-semibold text-gray-800 mb-5">Chỉnh Sửa Danh Mục</h3>
+				<form id="editForm">
+					<div class="mb-5">
+						<label class="block text-sm font-semibold text-gray-700 mb-2">Tên danh mục <span
+								class="text-red-500">*</span></label>
+						<input type="text" id="editName"
+							class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+							required>
+					</div>
+					<div class="mb-6">
+						<label class="block text-sm font-semibold text-gray-700 mb-2">Mô tả danh mục</label>
+						<textarea id="editDescription" rows="3"
+							class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition duration-200"></textarea>
+					</div>
+					<div class="flex gap-3">
+						<button type="submit"
+							class="flex-1 btn-primary text-white font-semibold py-2.5 px-4 rounded-lg">
+							Lưu Thay Đổi
+						</button>
+						<button type="button" onclick="closeEditModal()"
+							class="flex-1 btn-secondary text-white font-semibold py-2.5 px-4 rounded-lg">
+							Hủy
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- Delete Confirmation Modal -->
+		<div id="deleteModal"
+			class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+			<div class="bg-white rounded-xl p-6 w-full max-w-md">
+				<div class="text-center">
+					<div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+						<svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
+							</path>
+						</svg>
+					</div>
+					<h3 class="text-lg font-semibold text-gray-800 mb-2">Xác Nhận Xóa</h3>
+					<p class="text-gray-600 mb-6">Bạn có chắc chắn muốn xóa danh mục "<span id="deleteItemName"
+							class="font-semibold text-gray-800"></span>"? Hành động này không thể hoàn tác.</p>
+					<div class="flex gap-3">
+						<button onclick="confirmDelete()"
+							class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-200">
+							Xóa
+						</button>
+						<button onclick="closeDeleteModal()"
+							class="flex-1 btn-secondary text-white font-semibold py-2.5 px-4 rounded-lg">
+							Hủy
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+
+		const API_URL = 'http://localhost:8081/api/v1/user/categories';
+		const API_BASE_CATEGORY = 'http://localhost:8081/api/v1/user/category';
+		const API_BUDGET = 'http://localhost:8081/api/v1/user/budget';
+
+
+		const TOKEN_KEYS = ['token', 'accessToken', 'access_token', 'authToken', 'auth_token', 'jwt', 'authorization', 'Authorization'];
+
+		let categories = [];
+		let currentEditId = null;
+		let currentDeleteId = null;
+
+		document.addEventListener('DOMContentLoaded', function () {
+			fetchCategoriesFromApi();
+			document.getElementById('editForm').addEventListener('submit', async function (e) {
+				e.preventDefault();
+				if (!currentEditId) return;
+				const name = document.getElementById('editName').value.trim();
+				const description = document.getElementById('editDescription').value.trim();
+				if (!name) return;
+				const token = getTokenFromLocal();
+				if (!token) {
+					showToast('Yêu cầu đăng nhập', 'Không tìm thấy token. Vui lòng đăng nhập.', 'warn');
+					setTimeout(() => { window.location.href = 'http://localhost:8081/page/login'; }, 900);
+					return;
+				}
+
+	
+				try {
+					showToast('Đang lưu', 'Đang gửi yêu cầu cập nhật...', 'info', 2000);
+					const url = API_BASE_CATEGORY + '?id=' + encodeURIComponent(currentEditId);
+					const res = await fetch(url, {
+						method: 'PUT',
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						},
+						body: JSON.stringify({ name, description })
+					});
+					if (res.status === 401) {
+						showToast('Phiên không hợp lệ', 'Token không hợp lệ hoặc đã hết hạn.', 'error');
+						setTimeout(() => { window.location.href = 'http://localhost:8081/page/login'; }, 1000);
+						return;
+					}
+					const data = await res.json().catch(() => null);
+					if (res.ok && data && (data.status === 'SUCCESS' || data.message === 'SUCCESS')) {
+						const idx = categories.findIndex(c => c.id === currentEditId);
+						if (idx !== -1) {
+							categories[idx].name = name;
+							categories[idx].description = description;
+						}
+						persistCategoriesToLocal();
+						renderCategories();
+						updateTotalCount();
+						closeEditModal();
+						showToast('Thành công', 'Danh mục đã được cập nhật.', 'success');
+					} else {
+						const serverMsg = (data && (data.message || data.error)) ? (data.message || data.error) : `Lỗi server (status ${res.status})`;
+						showToast('Lỗi', serverMsg, 'error');
+						console.error('PUT /category error:', res.status, data);
+					}
+				} catch (err) {
+					console.error('Network error updating category:', err);
+					showToast('Lỗi kết nối', 'Không thể kết nối tới server.', 'error');
+				}
+
+			});
+
+			// Close modals when clicking outside
+			document.getElementById('editModal').addEventListener('click', function (e) {
+				if (e.target === this) closeEditModal();
+			});
+			document.getElementById('deleteModal').addEventListener('click', function (e) {
+				if (e.target === this) closeDeleteModal();
+			});
+		});
+
+		function getTokenFromLocal() {
+			for (const key of TOKEN_KEYS) {
+				const raw = localStorage.getItem(key);
+				if (!raw) continue;
+				try {
+					const parsed = JSON.parse(raw);
+					if (parsed && typeof parsed === 'object') {
+						if (parsed.token) return stripBearer(parsed.token);
+						if (parsed.accessToken) return stripBearer(parsed.accessToken);
+						if (parsed.access_token) return stripBearer(parsed.access_token);
+					}
+				} catch (err) { /* not json */ }
+
+				if (raw.startsWith('Bearer ')) return raw.split(' ')[1];
+				return stripBearer(raw);
+			}
+			return null;
+		}
+
+		function stripBearer(s) {
+			if (!s) return s;
+			return s.startsWith('Bearer ') ? s.split(' ')[1] : s;
+		}
+
+		// Hàm lấy ngân sách cho một danh mục
+		async function fetchBudgetForCategory(categoryId) {
+			const token = getTokenFromLocal();
+			if (!token) return null;
+
+			try {
+				const res = await fetch(`${API_BUDGET}?categoryId=${categoryId}`, {
+					method: 'GET',
+					headers: {
+						'Accept': 'application/json',
+						'Authorization': 'Bearer ' + token
+					}
+				});
+
+				if (res.ok) {
+					const data = await res.json();
+					if (data.status === 'SUCCESS' && data.data) {
+						return {
+							amount: data.data.amountLimit ?? null,
+							startDate: data.data.startDate ?? null,
+							endDate: data.data.endDate ?? null
+						};
+					}
+				}
+				return null;
+			} catch (err) {
+				console.error(`Error fetching budget for category ${categoryId}:`, err);
+				return null;
+			}
+		}
+
+		// Hàm định dạng số tiền
+		function formatCurrency(amount) {
+			if (amount === null || amount === undefined) return '--';
+			// amount could be negative; Intl formats negative numbers with minus sign automatically
+			return new Intl.NumberFormat('vi-VN', {
+				style: 'currency',
+				currency: 'VND',
+				minimumFractionDigits: 0
+			}).format(amount);
+		}
+
+		// Hàm xác định class CSS cho ngân sách
+		function getBudgetClass(amount) {
+			if (amount === null || amount === undefined) return 'budget-zero';
+			// Yêu cầu: nếu ngân sách nhỏ hơn 0 thì màu đỏ
+			if (Number(amount) < 0) return 'budget-negative';
+			if (Number(amount) > 0) return 'budget-positive';
+			return 'budget-zero';
+		}
+
+		async function fetchCategoriesFromApi() {
+			const emptyTitle = document.getElementById('emptyTitle');
+			const emptyDesc = document.getElementById('emptyDesc');
+			const emptyActions = document.getElementById('emptyActions');
+			emptyTitle.textContent = 'Đang tải danh mục...';
+			emptyDesc.textContent = 'Vui lòng chờ trong giây lát.';
+			emptyActions.innerHTML = '';
+			const token = getTokenFromLocal();
+			if (!token) {
+				emptyTitle.textContent = 'Không tìm thấy token';
+				emptyDesc.textContent = 'Không thể gọi API vì token chưa có trong localStorage.';
+				emptyActions.innerHTML = `
+      			<button onclick="window.location.href='http://localhost:8081/page/login'" 
+					class="btn-primary text-white font-semibold py-2.5 px-6 rounded-lg inline-flex items-center mx-auto">
+        			Đăng nhập
+     			</button>`;
+				console.warn('Category fetch aborted: no token found in localStorage. Tried keys:', TOKEN_KEYS);
+				return;
+			}
+
+			try {
+				const res = await fetch(API_URL, {
+					method: 'GET',
+					headers: {
+						'Accept': 'application/json',
+						'Authorization': 'Bearer ' + token
+					}
+				});
+				if (res.status === 401) {
+					emptyTitle.textContent = 'Phiên đăng nhập không hợp lệ';
+					emptyDesc.textContent = 'Token đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.';
+					emptyActions.innerHTML = `
+        			<button onclick="window.location.href='http://localhost:8081/page/login'" 
+						class="btn-primary text-white font-semibold py-2.5 px-6 rounded-lg inline-flex items-center mx-auto">
+          				Đăng nhập lại
+       				</button>`;
+					return;
+				}
+				const data = await res.json().catch(() => null);
+				if (data && (data.status === 'SUCCESS' || res.ok)) {
+					const list = Array.isArray(data.data) ? data.data : [];
+					categories = list.map(item => ({
+						id: item.categoryId ?? item.id ?? null,
+						name: item.name ?? 'Không tên',
+						description: item.description ?? '',
+						createdAt: item.createdAt ?? null,
+						budget: null
+					}));
+
+
+					if (categories.length === 0) {
+						emptyTitle.textContent = 'Danh sách trống';
+						emptyDesc.textContent = 'Hãy tạo danh mục đầu tiên để bắt đầu.';
+						if (typeof window.openCreateModal === 'function') {
+							emptyActions.innerHTML = `
+            				<button onclick="http://localhost:8081/page/create/category" 
+								class="btn-primary text-white font-semibold py-2.5 px-6 rounded-lg inline-flex items-center mx-auto">
+              					Tạo danh mục
+            				</button>`;
+						} else if (document.getElementById('openCreateModalBtn')) {
+							emptyActions.innerHTML = `
+            				<button onclick="document.getElementById('openCreateModalBtn').click()" 
+							class="btn-primary text-white font-semibold py-2.5 px-6 rounded-lg inline-flex items-center mx-auto">
+             					 Tạo danh mục
+            				</button>`;
+						} else {
+							emptyActions.innerHTML = `
+           					<button onclick="window.location.href='http://localhost:8081/page/create/category'" 
+								class="btn-primary text-white font-semibold py-2.5 px-6 rounded-lg inline-flex items-center mx-auto">
+              					Tạo danh mục
+            				</button>`;
+						}
+					} else {
+						emptyTitle.textContent = '';
+						emptyDesc.textContent = '';
+						emptyActions.innerHTML = '';
+					}
+					categories.sort((a, b) => Number(b.id) - Number(a.id));
+					const budgetPromises = categories.map(category =>
+						fetchBudgetForCategory(category.id)
+					);
+					const budgetResults = await Promise.allSettled(budgetPromises);
+					budgetResults.forEach((result, index) => {
+						if (result.status === 'fulfilled' && result.value !== null) {
+							categories[index].budget = result.value.amount;
+							categories[index].startDate = result.value.startDate;
+							categories[index].endDate = result.value.endDate;
+						} else {
+							categories[index].budget = null;
+							categories[index].startDate = null;
+							categories[index].endDate = null;
+						}
+					});
+					persistCategoriesToLocal();
+					renderCategories();
+					updateTotalCount("4312423");
+					toggleActionSection();
+				} else {
+					emptyTitle.textContent = 'Không thể tải danh mục';
+					emptyDesc.textContent = 'Server trả về lỗi hoặc dữ liệu rỗng.';
+					emptyActions.innerHTML = `
+        			<button onclick="fetchCategoriesFromApi()"
+						class="btn-primary text-white font-semibold py-2.5 px-6 rounded-lg inline-flex items-center mx-auto">
+          				Thử lại
+        			</button>`;
+					console.error('Unexpected API response', data);
+				}
+			} catch (err) {
+				emptyTitle.textContent = 'Lỗi kết nối';
+				emptyDesc.textContent = 'Không thể kết nối tới server. Kiểm tra server hoặc mạng.';
+				emptyActions.innerHTML = `
+      			<button onclick="fetchCategoriesFromApi()" class="btn-primary text-white font-semibold py-2.5 px-6 rounded-lg inline-flex items-center mx-auto">
+       				Thử lại
+      			</button>`;
+				console.error(err);
+			}
+		}
+
+
+		// Lưu categories hiện tại vào localStorage (dùng bởi màn tạo)
+		function persistCategoriesToLocal() {
+			try {
+				// lưu mảng nhỏ gọn gồm id và name để kiểm tra trùng tên nhanh
+				const payload = categories.map(c => ({ id: c.id, name: c.name, description: c.description, createdAt: c.createdAt }));
+				localStorage.setItem('categories', JSON.stringify(payload));
+			} catch (e) {
+				console.warn('Cannot persist categories to localStorage', e);
+			}
+		}
+
+		function renderCategories() {
+			const container = document.getElementById('categoriesContainer');
+			const emptyState = document.getElementById('emptyState');
+			const actionSection = document.getElementById('actionSection');
+
+			if (!categories || categories.length === 0) {
+				container.innerHTML = '';
+				emptyState.classList.remove('hidden');
+				actionSection.classList.add('hidden');
+				return;
+			}
+
+			emptyState.classList.add('hidden');
+			actionSection.classList.remove('hidden');
+
+			const categoriesHTML = categories.map(category => `
+            <div class="category-card border-b border-gray-100 last:border-b-0 p-6 hover:bg-gray-50">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                    <!-- Left: details -->
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">${escapeHtml(category.name)}</h3>
+                        <p class="text-gray-600 mb-3">${escapeHtml(category.description || 'Không có mô tả')}</p>
+                        <div class="text-sm text-gray-500 flex items-center">
+    						<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              						d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+   							 </svg>
+    						Thời gian áp dụng: 
+    						${category.startDate ? new Date(category.startDate).toLocaleDateString('vi-VN') : '---'}
+    						&nbsp;đến&nbsp;
+							${category.endDate ? new Date(category.endDate).toLocaleDateString('vi-VN') : '---'}
+						</div>
+                    </div>
+
+                    <!-- Middle: centered budget column -->
+                    <div class="budget-column flex flex-col items-center justify-center text-center px-4">
+                        <div class="text-sm text-gray-600 mb-1">Ngân sách</div>
+                        <div class="text-base ${getBudgetClass(category.budget)} font-medium">
+                            ${category.budget === null || category.budget === undefined ? '--' : formatCurrency(category.budget)}
+                        </div>
+                    </div>
+
+                    <!-- Right: actions -->
+                    <div class="flex gap-2 items-start ml-auto">
+                        <button onclick="editCategory('${category.id}')" 
+							class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition duration-200 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+								d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Sửa
+                        </button>
+                        <button onclick="deleteCategory('${category.id}')" 
+							class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg 
+							text-sm font-medium transition duration-200 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" 
+								stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                            Xóa
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+			container.innerHTML = categoriesHTML;
+		}
+
+		function updateTotalCount() {
+			document.getElementById('totalCount').textContent = categories.length;
+		}
+
+		function toggleActionSection() {
+			const actionSection = document.getElementById('actionSection');
+			if (categories.length > 0) {
+				actionSection.classList.remove('hidden');
+			} else {
+				actionSection.classList.add('hidden');
+			}
+		}
+
+		function editCategory(id) {
+			const category = categories.find(c => String(c.id) === String(id));
+			if (!category) return;
+			currentEditId = category.id;
+			document.getElementById('editName').value = category.name;
+			document.getElementById('editDescription').value = category.description || '';
+			document.getElementById('editModal').classList.remove('hidden');
+		}
+
+		function closeEditModal() {
+			document.getElementById('editModal').classList.add('hidden');
+			currentEditId = null;
+		}
+
+		function deleteCategory(id) {
+			const category = categories.find(c => String(c.id) === String(id));
+			if (!category) return;
+			currentDeleteId = category.id;
+			document.getElementById('deleteItemName').textContent = category.name;
+			document.getElementById('deleteModal').classList.remove('hidden');
+		}
+
+		function closeDeleteModal() {
+			document.getElementById('deleteModal').classList.add('hidden');
+			currentDeleteId = null;
+		}
+
+		// Khi người dùng xác nhận xóa: gọi API DELETE -> cập nhật local
+
+
+		async function confirmDelete() {
+			if (!currentDeleteId) return;
+			const token = getTokenFromLocal();
+			if (!token) {
+				showToast('Yêu cầu đăng nhập', 'Không tìm thấy token. Vui lòng đăng nhập.', 'warn');
+				setTimeout(() => { window.location.href = 'http://localhost:8081/page/login'; }, 900);
+				return;
+			}
+			try {
+				showToast('Đang xóa', 'Đang gửi yêu cầu xóa...', 'info', 1500);
+				const url = API_BASE_CATEGORY + '?id=' + encodeURIComponent(currentDeleteId);
+				const res = await fetch(url, {
+					method: 'DELETE',
+					headers: {
+						'Accept': 'application/json',
+						'Authorization': 'Bearer ' + token
+					}
+				});
+				if (res.status === 401) {
+					showToast('Phiên không hợp lệ', 'Token không hợp lệ hoặc đã hết hạn.', 'error');
+					setTimeout(() => { window.location.href = 'http://localhost:8081/page/login'; }, 1000);
+					return;
+				}
+				const data = await res.json().catch(() => null);
+				if (res.ok && data && (data.status === 'SUCCESS' || data.message === 'SUCCESS')) {
+					categories = categories.filter(c => String(c.id) !== String(currentDeleteId));
+					persistCategoriesToLocal();
+					renderCategories();
+					updateTotalCount();
+					toggleActionSection();
+					closeDeleteModal();
+					showToast('Đã xóa', 'Danh mục đã được xóa.', 'success');
+				} else {
+					const serverMsg = (data && (data.message || data.error)) ? (data.message || data.error) : `Lỗi server (status ${res.status})`;
+					showToast('Lỗi', serverMsg, 'error');
+					console.error('DELETE /category error:', res.status, data);
+				}
+			} catch (err) {
+				console.error('Network error deleting category:', err);
+				showToast('Lỗi kết nối', 'Không thể kết nối tới server.', 'error');
+			}
+		}
+
+		function escapeHtml(unsafe) {
+			if (unsafe === null || unsafe === undefined) return '';
+			return String(unsafe)
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#039;');
+		}
+
+		
+
+		function ensureToastElement() {
+			if (document.getElementById('pageToast')) return document.getElementById('pageToast');
+			const t = document.createElement('div');
+			t.id = 'pageToast';
+			t.style.position = 'fixed';
+			t.style.right = '16px';
+			t.style.top = '16px';
+			t.style.zIndex = 9999;
+			t.style.minWidth = '220px';
+			t.style.padding = '10px 14px';
+			t.style.borderRadius = '8px';
+			t.style.boxShadow = '0 6px 18px rgba(15,23,42,0.12)';
+			t.style.background = '#fff';
+			t.style.color = '#0f172a';
+			t.style.fontSize = '14px';
+			t.style.display = 'none';
+			t.style.alignItems = 'center';
+			t.style.gap = '8px';
+			t.style.border = '1px solid rgba(2,6,23,0.06)';
+			document.body.appendChild(t);
+			return t;
+		}
+
+		let pageToastTimer = null;
+		function showToast(title, message, type = 'success', duration = 2200) {
+			const el = ensureToastElement();
+			let accent = '#10b981';
+			if (type === 'error') accent = '#ef4444';
+			if (type === 'warn') accent = '#f59e0b';
+			if (type === 'info') accent = '#3b82f6';
+
+			el.innerHTML = `<div style="width:8px;height:32px;background:${accent};border-radius:4px;flex-shrink:0"></div>
+                        <div style="display:flex;flex-direction:column">
+                            <strong style="display:block;margin-bottom:2px">${title}</strong>
+                            <span style="opacity:0.9">${message}</span>
+                        </div>`;
+			el.style.display = 'flex';
+			if (pageToastTimer) { clearTimeout(pageToastTimer); pageToastTimer = null; }
+			if (duration > 0) {
+				pageToastTimer = setTimeout(() => { el.style.display = 'none'; }, duration);
+			}
+		}
+
+		// Expose confirmDelete to global (used by delete modal button)
+		window.confirmDelete = confirmDelete;
+		window.closeDeleteModal = closeDeleteModal;
+		window.editCategory = editCategory;
+		window.deleteCategory = deleteCategory;
+		window.closeEditModal = closeEditModal;
+	</script>
+
+</body>
+
+</html>

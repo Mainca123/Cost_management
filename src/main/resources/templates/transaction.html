@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Lịch sử giao dịch</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<style>
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+		}
+
+		body {
+			background: #f5f7fa;
+			color: #333;
+			line-height: 1.5;
+		}
+
+		header {
+			background: #2c3e50;
+			color: #fff;
+			padding: 15px 20px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		header h1 {
+			font-size: 20px;
+		}
+
+		.btn-home {
+			background: #3498db;
+			color: #fff;
+			border: none;
+			padding: 8px 16px;
+			border-radius: 6px;
+			cursor: pointer;
+			text-decoration: none;
+			font-size: 14px;
+			transition: background 0.3s ease;
+		}
+
+		.btn-home:hover {
+			background: #2980b9;
+		}
+
+		/* Đặt nút Home bên trái, tiêu đề bên phải */
+		header {
+			flex-direction: row-reverse;
+		}
+
+		main {
+			padding: 20px;
+		}
+
+		.table-container {
+			background: #fff;
+			border-radius: 10px;
+			padding: 20px;
+			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+			overflow-x: auto;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 10px;
+		}
+
+		thead {
+			background: #3498db;
+			color: #fff;
+		}
+
+		th,
+		td {
+			padding: 12px 15px;
+			border-bottom: 1px solid #ddd;
+			text-align: left;
+			font-size: 14px;
+		}
+
+		tr:hover {
+			background: #f1f9ff;
+		}
+
+		.error {
+			margin-top: 15px;
+			padding: 12px;
+			border-radius: 6px;
+			background: #ffe6e6;
+			color: #c0392b;
+			display: none;
+		}
+
+		.loading {
+			text-align: center;
+			margin: 20px 0;
+			font-size: 15px;
+			color: #555;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h1>Lịch sử giao dịch</h1>
+		<a href="http://localhost:8081/page/home" class="btn-home">🏠 Home</a>
+	</header>
+
+	<main>
+		<div class="table-container">
+			<div id="loading" class="loading">Đang tải dữ liệu...</div>
+			<div id="error" class="error"></div>
+			<table id="transactionTable" style="display:none;">
+				<thead>
+					<tr>
+						<th>Mã GD</th>
+						<th>Loại</th>
+						<th>Số tiền</th>
+						<th>Ghi chú</th>
+						<th>Ngày</th>
+					</tr>
+				</thead>
+				<tbody id="transactionBody"></tbody>
+			</table>
+		</div>
+	</main>
+	<script>
+		async function loadTransactions() {
+			const table = document.getElementById("transactionTable");
+			const tbody = document.getElementById("transactionBody");
+			const errorDiv = document.getElementById("error");
+			const loadingDiv = document.getElementById("loading");
+
+			try {
+				// Lấy token từ localStorage
+				const token = localStorage.getItem("accessToken") || localStorage.getItem("token") || "";
+
+				const response = await fetch("http://localhost:8081/api/v1/transactions", {
+					headers: {
+						"Accept": "application/json",
+						"Authorization": token ? "Bearer " + token : ""
+					}
+				});
+
+				loadingDiv.style.display = "none";
+
+				if (!response.ok) {
+					throw new Error(`Lỗi ${response.status}: Không thể tải dữ liệu.`);
+				}
+
+				const result = await response.json();
+
+				if (result.status !== "SUCCESS" || !Array.isArray(result.data)) {
+					throw new Error("Dữ liệu trả về không hợp lệ.");
+				}
+
+				// Sắp xếp giảm dần theo transactionId
+				result.data.sort((a, b) => b.transactionId - a.transactionId);
+
+				tbody.innerHTML = "";
+				result.data.forEach(tx => {
+					const row = document.createElement("tr");
+					row.innerHTML = `
+          <td>${tx.transactionId}</td>
+          <td>${tx.type}</td>
+          <td>${tx.amount.toLocaleString("vi-VN")} VND</td>
+          <td>${tx.note}</td>
+          <td>${new Date(tx.date).toLocaleString("vi-VN")}</td>
+        `;
+					tbody.appendChild(row);
+				});
+
+				table.style.display = "table";
+
+			} catch (err) {
+				errorDiv.textContent = err.message;
+				errorDiv.style.display = "block";
+			}
+		}
+
+		window.onload = loadTransactions;
+	</script>
+</body>
+
+</html>

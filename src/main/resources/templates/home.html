@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>QUẢN LÝ CHI TIÊU</title>
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			font-family: "Segoe UI", Arial, sans-serif;
+			background: linear-gradient(135deg, #ffffff, #ecfcfe);
+			color: #333;
+		}
+
+		/* Header */
+		header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 12px 40px;
+			background: #9ab8ff;
+			box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+			position: sticky;
+			top: 0;
+			z-index: 10;
+		}
+
+		.logo {
+			font-size: 32px;
+			font-weight: 900;
+			text-transform: uppercase;
+			background: linear-gradient(45deg, #ff0000, #00a2ff, #000000);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			text-shadow:
+				2px 2px 6px rgba(0, 0, 0, 0.3),
+				0 0 10px rgba(255, 255, 255, 0.3);
+			letter-spacing: 2px;
+			cursor: default;
+			animation: shimmer 3s infinite;
+			background-size: 200% 200%;
+		}
+
+		@keyframes shimmer {
+			0% {
+				background-position: 0% 50%;
+			}
+
+			50% {
+				background-position: 100% 50%;
+			}
+
+			100% {
+				background-position: 0% 50%;
+			}
+		}
+
+		.user-actions {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+
+		.user-actions img {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background: linear-gradient(135deg, #0011fa, #ff0000);
+		}
+
+		.user-actions img:hover {
+			transform: scale(1.1);
+			box-shadow: 0 0 12px rgba(255, 182, 193, 0.7), 0 0 20px rgba(255, 105, 180, 0.5);
+			filter: brightness(1.1);
+		}
+
+		.btn {
+			border: none;
+			padding: 10px 20px;
+			border-radius: 20px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, #0e426f, #a7bafa);
+			color: #fff;
+		}
+
+		.btn-primary:hover {
+			transform: translateY(-2px) scale(1.05);
+			box-shadow: 0 6px 14px rgba(0, 191, 255, 0.35);
+		}
+
+		.btn-secondary {
+			background: linear-gradient(135deg, #094e20, #7dfae3);
+			color: #fff;
+		}
+
+		.btn-logout {
+			background: linear-gradient(135deg, #000dba, #ff8c8c);
+			color: #fff;
+		}
+
+		.btn-logout:hover {
+			transform: translateY(-2px) scale(1.05);
+			background: linear-gradient(135deg, #ba0101, #ff8c8c);
+			box-shadow: 0 6px 14px rgb(255, 0, 0);
+		}
+
+		.btn-secondary:hover {
+			transform: translateY(-2px) scale(1.05);
+			box-shadow: 0 6px 14px rgba(0, 200, 150, 0.35);
+		}
+
+		/* Poster container */
+		.poster-container {
+			position: relative;
+			width: 100%;
+			height: 260px;
+			overflow: hidden;
+			border-radius: 0;
+		}
+
+		/* Poster */
+		.poster {
+			position: absolute;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			padding: 20px;
+			color: #fff;
+			opacity: 0;
+			transform: translateX(80px) scale(0.95);
+			transition: opacity 0.8s ease, transform 0.8s ease;
+			z-index: 0;
+		}
+
+		.poster.active {
+			opacity: 1;
+			transform: translateX(0) scale(1);
+			z-index: 2;
+		}
+
+		.poster.exit-left {
+			opacity: 0;
+			transform: translateX(-500px) scale(0.95);
+			z-index: 1;
+		}
+
+		/* Nút điều hướng */
+		.nav-btn {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			background: rgba(0, 0, 0, 0.5);
+			color: #fff;
+			border: none;
+			padding: 10px 15px;
+			cursor: pointer;
+			border-radius: 50%;
+			font-size: 20px;
+			z-index: 5;
+			opacity: 0;
+			transition: opacity 0.4s ease, background 0.3s;
+			pointer-events: none;
+		}
+
+		.poster-container:hover .nav-btn {
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		.nav-btn:hover {
+			background: rgba(3, 251, 255, 0.8);
+			transform: translateY(-50%) scale(1.1);
+			box-shadow: 0 0 10px rgba(0, 255, 251, 0.4);
+		}
+
+		.nav-btn.prev {
+			left: 5px;
+		}
+
+		.nav-btn.next {
+			right: 5px;
+		}
+
+		/* Dots */
+		.dots {
+			position: absolute;
+			bottom: 15px;
+			left: 50%;
+			transform: translateX(-50%);
+			display: flex;
+			gap: 10px;
+			z-index: 5;
+		}
+
+		.dot {
+			width: 12px;
+			height: 12px;
+			background: rgba(255, 255, 255, 0.5);
+			border-radius: 50%;
+			cursor: pointer;
+			transition: background 0.3s, transform 0.3s;
+		}
+
+		.dot.active {
+			background: #fff;
+			transform: scale(1.2);
+		}
+
+		/* Menu dạng lưới */
+		.menu {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 20px;
+			padding: 40px;
+		}
+
+		.menu button {
+			height: 120px;
+			border-radius: 16px;
+			font-size: 25px;
+			font-weight: 600;
+			border: none;
+			cursor: pointer;
+			color: #fff;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+			transition: transform 0.25s ease, box-shadow 0.25s ease;
+		}
+
+		.menu button:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 8px 16px rgba(22, 122, 180, 0.8);
+		}
+
+		.menu i {
+			font-size: 28px;
+		}
+
+		.btn1 {
+			background: linear-gradient(135deg, #2196f3, #64b5f6);
+		}
+
+		.btn2 {
+			background: linear-gradient(135deg, #4caf50, #81c784);
+		}
+
+		.btn3 {
+			background: linear-gradient(135deg, #ffb300, #ffca28);
+		}
+
+		.btn4 {
+			background: linear-gradient(135deg, #e91e63, #f06292);
+		}
+
+		.btn5 {
+			background: linear-gradient(135deg, #673ab7, #9575cd);
+		}
+
+		.btn6 {
+			background: linear-gradient(135deg, #ff5722, #ff8a65);
+		}
+
+		.btn7 {
+			background: linear-gradient(135deg, #009688, #4db6ac);
+		}
+
+		.btn8 {
+			background: linear-gradient(135deg, #3f51b5, #7986cb);
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Header -->
+	<header>
+		<div class="logo">QUẢN LÝ CHI TIÊU</div>
+		<div class="user-actions">
+			<img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="User">
+			<button class="btn btn-secondary">Đăng ký</button>
+			<button class="btn btn-primary">Đăng nhập</button>
+		</div>
+	</header>
+	<!-- Poster Slideshow -->
+	<div class="poster-container">
+		<div class="poster active" style="background: linear-gradient(135deg, #036cff, #4CAF50);">
+			<h1>💳 Quản lý chi tiêu thông minh</h1>
+			<p>Theo dõi giao dịch, quản lý danh mục, và gợi ý chi tiêu an toàn – tiện lợi ngay trên ứng dụng của bạn.
+			</p>
+		</div>
+		<div class="poster" style="background: linear-gradient(135deg, #f6a67e, #d34f51);">
+			<h1>📊 Báo cáo tài chính trực quan</h1>
+			<p>Xem thống kê chi tiêu hàng tháng với biểu đồ sinh động, dễ dàng nắm bắt tình hình tài chính.</p>
+		</div>
+		<div class="poster" style="background: linear-gradient(135deg, #5c219a, #73a3f7);">
+			<h1>💡 Gợi ý chi tiêu thông minh</h1>
+			<p>Ứng dụng sẽ phân tích thói quen của bạn và đưa ra gợi ý giúp quản lý chi tiêu hợp lý hơn.</p>
+		</div>
+		<!-- Nút điều hướng -->
+		<button class="nav-btn prev">&#10094;</button>
+		<button class="nav-btn next">&#10095;</button>
+		<!-- Chấm tròn -->
+		<div class="dots"></div>
+	</div>
+	<!-- Menu chức năng -->
+	<div class="menu">
+		<button class="btn1" onclick="navigateWithTokenCheck('http://localhost:8081/page/transfer')">
+			<i class="fas fa-arrow-right"></i> Chuyển tiền
+		</button>
+		<button class="btn2" onclick="navigateWithTokenCheck('http://localhost:8081/page/bank')">
+			<i class="fas fa-university"></i> Liên kết ngân hàng
+		</button>
+		<button class="btn3" onclick="navigateWithTokenCheck('http://localhost:8081/page/budget')">
+			<i class="fas fa-wallet"></i> Thiết lập ngân sách
+		</button>
+		<button class="btn4" onclick="navigateWithTokenCheck('http://localhost:8081/page/category')">
+			<i class="fas fa-list"></i> Danh mục
+		</button>
+		<button class="btn5" onclick="navigateWithTokenCheck('http://localhost:8081/page/transaction')">
+			<i class="fas fa-history"></i> Lịch sử giao dịch
+		</button>
+		<button class="btn6" onclick="navigateWithTokenCheck('http://localhost:8081/page/home')">
+			<i class="fas fa-headset"></i> Chăm sóc khách hàng
+		</button>
+		<button class="btn7" onclick="navigateWithTokenCheck('http://localhost:8081/page/home')">
+			<i class="fas fa-chart-bar"></i> Thống kê
+		</button>
+		<button class="btn8" onclick="navigateWithTokenCheck('http://localhost:8081/page/home')">
+			<i class="fas fa-lightbulb"></i> Gợi ý chi tiêu
+		</button>
+	</div>
+	<script>
+		// Hàm kiểm tra token trước khi chuyển hướng
+		function navigateWithTokenCheck(url) {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				alert('Vui lòng đăng nhập để sử dụng tính năng này!');
+				window.location.href = 'http://localhost:8081/page/login';
+			} else {
+				window.location.href = url;
+			}
+		}
+		
+		// User actions
+		const userActions = document.querySelector('.user-actions');
+		function renderButtons() {
+			userActions.innerHTML = '';
+			const token = localStorage.getItem('token');
+			if (token) {
+				const userImg = document.createElement('img');
+				userImg.src = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+				userImg.alt = 'User';
+				userImg.style.cursor = 'pointer';
+				userImg.onclick = () => window.location.href = 'http://localhost:8081/page/profile';
+				const logoutBtn = document.createElement('button');
+				logoutBtn.className = 'btn btn-primary btn-logout';
+				logoutBtn.textContent = 'Đăng xuất';
+				logoutBtn.onclick = () => {
+					if (confirm('Bạn có chắc muốn đăng xuất không?')) {
+						localStorage.clear();
+						renderButtons();
+					}
+				};
+				userActions.appendChild(userImg);
+				userActions.appendChild(logoutBtn);
+			} else {
+				const signupBtn = document.createElement('button');
+				signupBtn.className = 'btn btn-secondary';
+				signupBtn.textContent = 'Đăng ký';
+				signupBtn.onclick = () => window.location.href = 'http://localhost:8081/page/register';
+				const loginBtn = document.createElement('button');
+				loginBtn.className = 'btn btn-primary';
+				loginBtn.textContent = 'Đăng nhập';
+				loginBtn.onclick = () => window.location.href = 'http://localhost:8081/page/login';
+				const userImg = document.createElement('img');
+				userImg.src = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+				userImg.alt = 'User';
+				userActions.appendChild(userImg);
+				userActions.appendChild(signupBtn);
+				userActions.appendChild(loginBtn);
+			}
+		}
+		renderButtons();
+		// Poster slideshow
+		const posters = document.querySelectorAll('.poster');
+		const prevBtn = document.querySelector('.prev');
+		const nextBtn = document.querySelector('.next');
+		const dotsContainer = document.querySelector('.dots');
+		let currentPoster = 0;
+		let interval;
+		// Tạo chấm tròn
+		posters.forEach((_, i) => {
+			const dot = document.createElement('div');
+			dot.className = 'dot' + (i === 0 ? ' active' : '');
+			dot.addEventListener('click', () => showPoster(i));
+			dotsContainer.appendChild(dot);
+		});
+		const dots = document.querySelectorAll('.dot');
+		function showPoster(nextIndex) {
+			if (nextIndex === currentPoster) return;
+			// Reset tất cả slide
+			posters.forEach((poster, i) => {
+				poster.classList.remove("active", "exit-left");
+				posters[i].style.zIndex = 0;
+			});
+			// Slide hiện tại ra bên trái (nếu muốn animation mượt)
+			posters[currentPoster].classList.add("exit-left");
+			// Slide tiếp theo vào
+			posters[nextIndex].classList.add("active");
+			posters[nextIndex].style.zIndex = 2;
+			// Update dots
+			dots.forEach(dot => dot.classList.remove("active"));
+			dots[nextIndex].classList.add("active");
+			currentPoster = nextIndex;
+		}
+		function nextPoster() {
+			const nextIndex = (currentPoster + 1) % posters.length;
+			showPoster(nextIndex);
+		}
+		function prevPoster() {
+			const prevIndex = (currentPoster - 1 + posters.length) % posters.length;
+			showPoster(prevIndex);
+		}
+		nextBtn.addEventListener('click', () => {
+			nextPoster();
+			resetInterval();
+		});
+		prevBtn.addEventListener('click', () => {
+			prevPoster();
+			resetInterval();
+		});
+		function startInterval() {
+			interval = setInterval(nextPoster, 8000);
+		}
+		function resetInterval() {
+			clearInterval(interval);
+			startInterval();
+		}
+		startInterval();
+	</script>
+</body>
+
+</html>
