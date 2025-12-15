@@ -1,18 +1,19 @@
 package com.example.HeThongQuanLyTaiChinhThongMinh.domain.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class BudgetResponseDTO {
-    private Double amountLimit;
-    private Date startDate;
-    private Date endDate;
+    private Long id;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private Double limitAmount;
+    private LocalDateTime createdAt;
 }

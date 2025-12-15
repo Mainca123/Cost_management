@@ -1,0 +1,561 @@
+/* ==============================
+        GLOBAL
+============================== */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f5f7fb;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ==============================
+        HEADER
+============================== */
+.header {
+    background: linear-gradient(to right, #ffe9a0, #ffd57c);
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #d6b36f;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #b34f00;
+}
+
+.user-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.user-box img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #444;
+}
+
+/* ==============================
+        BUTTON BASE
+============================== */
+.btn {
+    position: relative;
+    overflow: hidden;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    transition: 0.2s ease;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.15);
+}
+
+.btn:hover { filter: brightness(1.08); }
+
+.btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+
+.btn::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50%;
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.4s ease, opacity 0.6s ease;
+}
+
+.btn:active::after {
+    transform: scale(12);
+    opacity: 1;
+    left: var(--x);
+    top: var(--y);
+}
+
+/* Button colors */
+.btn-login  { background: #008cff; color: white; }
+.btn-signup { background: #3ac55b; color: white; }
+.btn-logout { background: #ff5757; color: white; }
+.btn-primary { background: #4a7fff; color: white; }
+
+/* ==============================
+        NOTIFICATION ICON
+============================== */
+.notify-icon {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    border-radius: 50%;
+    background: #ffe187;
+    border: 2px solid #d9a72f;
+    transition: 0.25s ease;
+}
+
+.notify-icon:hover {
+    background: #ffd76b;
+    animation: bellShake 0.3s ease;
+}
+
+@keyframes bellShake {
+    0% { transform: rotate(0); }
+    25% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0); }
+}
+
+.notify-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: red;
+    color: white;
+    padding: 2px 6px;
+    font-size: 11px;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+/* NOTIFY DROPDOWN */
+.notify-menu {
+    position: absolute;
+    top: 75px;
+    right: 25px;
+    width: 260px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    display: none;
+    z-index: 999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+
+.notify-menu div {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.notify-menu div:hover { background: #fff1c9; }
+
+.notify-menu div:last-child { border-bottom: none; }
+
+/* ==============================
+        MENU BAR
+============================== */
+.menu-bar {
+    background: #fff;
+    padding: 12px 25px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    gap: 12px;
+}
+
+.tab-btn {
+    position: relative;
+    overflow: hidden;
+    padding: 8px 18px;
+    background: #f8f8f8;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.12);
+}
+
+.tab-btn.active {
+    background: #4a7fff;
+    color: white;
+    border-color: #3765d8;
+    transform: translateY(-2px);
+}
+
+/* ==========================================
+        TAB BUTTON HOVER EFFECT
+========================================== */
+.tab-btn {
+    position: relative;
+    overflow: hidden;
+    transition: 0.25s ease;
+}
+
+.tab-btn:hover {
+    background: #e9f1ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    border-color: #8ab6ff;
+}
+
+.tab-btn::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 120%;
+    height: 14px;
+    background: rgba(80,140,255,0.35);
+    transform: translateX(-50%) translateY(0);
+    filter: blur(12px);
+    opacity: 0;
+    transition: 0.3s ease;
+}
+
+/* Hover: glow hiện */
+.tab-btn:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(5px);
+}
+
+/* Active chung */
+.tab-btn.active {
+  background: #4a7fff;
+  color: white;
+  border-color: #3765d8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+
+/* Active cho nút Chức năng (giữ glow luôn bật) */
+#tabFunc.active::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(5px);
+}
+
+/* (OPTIONAL) Khi active thì hover không cần đổi màu nữa */
+#tabFunc.active:hover {
+  background: #4a7fff;
+}
+
+
+
+.tab-btn.active:hover { background: #5c8cff; }
+
+/* ==============================
+        DROPDOWN
+============================== */
+.dropdown { position: relative; }
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background: white;
+    top: 45px;
+    width: 180px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 999;
+}
+.dropdown-menu div { padding: 12px; cursor: pointer; }
+.dropdown-menu div:hover { background: #dfeeff; }
+
+/* ==============================
+        MAIN CONTENT
+============================== */
+.container { padding: 25px; }
+
+.panel {
+    display: flex;
+    gap: 25px;
+}
+
+/* ==============================
+   BOX (GIỮ STYLE CŨ, NÂNG FORM)
+============================== */
+.box {
+    flex: 1;
+    background: #e8f9e6;
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    transition: 0.25s ease;
+}
+
+.box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* Head */
+.box-head {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.box-head h3 { margin: 0; }
+
+.box-sub {
+    font-size: 13px;
+    color: rgba(0,0,0,0.55);
+}
+
+/* Grid form: khoa học hơn */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+    align-items: start;
+}
+
+.field { display: flex; flex-direction: column; }
+
+.field-full { grid-column: 1 / -1; }
+
+.box label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(0,0,0,0.7);
+}
+
+.box input,
+.box select,
+.box textarea {
+    width: 93%;
+    padding: 10px 10px;
+    border-radius: 8px;
+    border: 1px solid #bbb;
+    margin-top: 7px;
+    background: rgba(255,255,255,0.85);
+    transition: 0.2s ease;
+    outline: none;
+}
+
+.box textarea {
+    min-height: 86px;
+    resize: vertical;
+}
+
+.box input:focus,
+.box select:focus,
+.box textarea:focus {
+    border-color: #6aa6ff;
+    box-shadow: 0 0 0 3px rgba(90,140,255,0.18);
+}
+
+/* Actions + Stat line */
+.box-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.stat-line {
+    margin-left: auto;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    background: rgba(255,255,255,0.55);
+    border: 1px dashed rgba(0,0,0,0.18);
+    padding: 10px 12px;
+    border-radius: 10px;
+    min-width: 260px;
+    justify-content: space-between;
+}
+
+.stat-label {
+    font-weight: 600;
+    color: rgba(0,0,0,0.65);
+    font-size: 13px;
+}
+
+/* Value right-aligned, đổi màu theo class */
+.stat-value {
+    font-weight: 800;
+    font-size: 14px;
+    text-align: right;
+    min-width: 120px;
+}
+
+.stat-ok   { color: #138a36; } /* xanh */
+.stat-warn { color: #b57b00; } /* vàng */
+.stat-bad  { color: #c62828; } /* đỏ */
+
+/* ==============================
+        CHART AREA
+============================== */
+.chart-box {
+    margin-top: 24px;
+    background: #dcebff;
+    padding: 20px;
+    border-radius: 14px;
+}
+
+/* ==============================
+        AUTH MODAL
+============================== */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.auth-modal {
+  background: white;
+  width: 340px;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+  animation: popIn 0.35s ease;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.auth-modal h2 {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.auth-modal input {
+  width: 93%;
+  padding: 10px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.auth-modal button {
+  width: 100%;
+  padding: 10px;
+  background: #4a7fff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.auth-modal button:hover {
+  background: #3b6fe0;
+}
+
+.switch {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.switch a {
+  color: #4a7fff;
+  cursor: pointer;
+}
+
+.error {
+  margin-top: 10px;
+  color: #c62828;
+  font-size: 13px;
+  text-align: center;
+}
+
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 44px; /* chừa chỗ cho icon */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 34%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0.65;
+  user-select: none;
+}
+
+.toggle-password:hover {
+  opacity: 1;
+}
+
+canvas {
+    width: 100% !important;
+    height: 300px !important;
+    background: #cfe2ff;
+    border-radius: 10px;
+}
+
+/* ================================
+   CHART TOOLBAR
+================================ */
+
+.chart-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  background: #f8f9fc;
+  border-radius: 8px;
+}
+
+.year-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.year-picker label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.year-picker select {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.year-picker select:focus {
+  outline: none;
+  border-color: #4a7cff;
+  box-shadow: 0 0 0 2px rgba(74, 124, 255, 0.2);
+}
+
+.chart-note {
+  font-size: 13px;
+  color: #555;
+  font-style: italic;
+}

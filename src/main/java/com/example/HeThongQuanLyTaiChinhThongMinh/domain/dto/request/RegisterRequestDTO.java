@@ -2,29 +2,22 @@ package com.example.HeThongQuanLyTaiChinhThongMinh.domain.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 public class RegisterRequestDTO {
-
-    @NotBlank(message = "Not null full name")
+    @NotBlank
     private String fullName;
-
-    @NotBlank(message = "Not null email")
-    @Email(message = "Not correct from email")
+    @NotBlank
+        @Email
     private String email;
 
-    @NotBlank(message = "Not null phone number")
-    private String phoneNumber;
-    @NotBlank(message = "Not null username")
-    private String username;
-    @NotBlank(message = "Not null password")
+    @NotBlank
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$",
+            message = "Mật khẩu phải ≥ 8 ký tự, gồm chữ hoa, chữ thường và số")
     private String password;
-
-    private String gender;
-
 }

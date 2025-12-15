@@ -1,17 +1,21 @@
 package com.example.HeThongQuanLyTaiChinhThongMinh.domain.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+import java.time.LocalDate;
+
+@Getter
 public class BudgetRequestDTO {
-    private Double amountLimit;
-    private Date startDate;
-    private Date endDate;
-    private Long categoryId;
+
+    @NotNull
+    private LocalDate startDate;
+
+    @NotNull
+    private LocalDate endDate;
+
+    @NotNull
+    private Double limitAmount;
 }

@@ -20,12 +20,16 @@ public class BudgetController {
     }
 
     @GetMapping("/user/budget")
-    public ResponseEntity<?> getAmountLimit(@RequestParam Long categoryId){
-        return VsResponseUtil.success(budgetService.getBudgetAmountLimit(categoryId));
+    public ResponseEntity<?> getAll(){
+        return VsResponseUtil.success(budgetService.getAll());
+    }
+    @GetMapping("/user/budget/sum")
+    public ResponseEntity<?> sum(){
+        return VsResponseUtil.success(budgetService.sumExpenseRemaining());
     }
 
     @PutMapping("/user/budget")
-    public ResponseEntity<?> setBudget(@RequestParam Long categoryId, @RequestParam Double amount){
-        return VsResponseUtil.success(budgetService.setAmountLimit(categoryId, amount));
+    public ResponseEntity<?> setBudget(@RequestParam Double amount){
+        return VsResponseUtil.success(budgetService.setAmountLimit(amount));
     }
 }

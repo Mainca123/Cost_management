@@ -1,0 +1,206 @@
+/* ===============================
+   PAGE HEADER
+================================ */
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 18px;
+  height:60px;
+}
+
+.page-head h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0044ff;
+}
+
+/* ===============================
+   TABLE
+================================ */
+.data-table {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 14px;
+  border-collapse: collapse;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.data-table thead {
+  background: #f1f5ff;
+}
+
+.data-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 18px;
+  font-weight: 700;
+  color: #334155;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.data-table td {
+  padding: 14px 16px;
+  font-size: 18px;
+  color: #1f2937;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+  background: #f8fbff;
+}
+
+/* Column sizing */
+.data-table td:first-child {
+  width: 60px;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 16px;
+
+}
+.data-table td:nth-child(2) {
+  width: 30%;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.data-table td:nth-child(3) {
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.data-table td:nth-child(4) {
+  width: 60px;
+  white-space: nowrap;
+  font-size: 16px;
+  color: #475569;
+}
+
+.data-table td:last-child {
+  width: 140px;
+  text-align: right;
+}
+
+/* ===============================
+   ACTION BUTTONS
+================================ */
+.action-btn {
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.action-edit {
+  background: #29f744;
+  color: #fff;
+}
+
+.action-edit:hover {
+  background: #2563eb;
+}
+
+.action-delete {
+  background: #ef4444;
+  color: #fff;
+  margin-left: 6px;
+}
+
+.action-delete:hover {
+  background: #dc2626;
+}
+
+/* ===============================
+   MODAL
+================================ */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.45);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  width: 420px;
+  background: #ebfaff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+  animation: fadeUp 0.25s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-box h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 18px;
+  color: #0c65f4;
+}
+
+/* Form */
+.modal-box label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #475569;
+  margin-top: 12px;
+  display: block;
+}
+
+.modal-box input,
+.modal-box textarea {
+  width: 93%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.modal-box textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.modal-box input:focus,
+.modal-box textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+/* Modal actions */
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.35);
+  height: 90%;
+}
+
+.page-head .btn-primary:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+}

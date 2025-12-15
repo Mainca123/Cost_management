@@ -7,10 +7,12 @@ import org.springframework.data.repository.query.Param; // cần thêm cái này
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+    Optional<Category> findByIdAndDeletedAtIsNull(Long id);
+    List<Category> findByUserId(Long id);
+    List<Category> findByUserIdOrderByIdDesc(Long id);
 
-    @Query("SELECT c FROM Category c WHERE c.user.userId = :id AND c.deletedAt IS NULL")
-    List<Category> findByUserId(@Param("id") Long id);
 }

@@ -1,5 +1,6 @@
 package com.example.HeThongQuanLyTaiChinhThongMinh.service.impl;
 
+//import com.example.HeThongQuanLyTaiChinhThongMinh.domain.dto.response.CategoryResponseDTO;
 import com.example.HeThongQuanLyTaiChinhThongMinh.domain.dto.request.CategoryRequestDTO;
 import com.example.HeThongQuanLyTaiChinhThongMinh.domain.dto.response.CategoryResponseDTO;
 import com.example.HeThongQuanLyTaiChinhThongMinh.domain.entity.Category;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,8 +27,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(()
-        -> new RuntimeException("not.found.category.id"+id));
+        return categoryRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(()
+        -> new RuntimeException("not.found.category.id." + id));
     }
 
     @Override
@@ -35,52 +37,55 @@ public class CategoryServiceImpl implements CategoryService {
            User user = userService.getUserByUsername(
                    SecurityContextHolder.getContext().getAuthentication().getName()
            );
-           Category category = categoryMapper.toCategory(categoryRequestDTO);
-           category.setUser(user);
+           Category category = Category.builder()
+                   .name(categoryRequestDTO.getName())
+                   .description(categoryRequestDTO.getDescription())
+                   .user(user)
+                   .createdAt(LocalDateTime.now())
+                   .build();
            categoryRepository.save(category);
            return "SUCCESS";
        } catch (RuntimeException e) {
            throw new RuntimeException("error.create.category."+ e);
        }
     }
-    @Override
-    public CategoryResponseDTO getCate(Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow(()
-                -> new RuntimeException("not.found.category.id."+id));
-        return categoryMapper.toCategoryResponseDTO(category);
-    }
-
+//    @Override
+//    public CategoryResponseDTO getCate(Long id) {
+//        Category category = categoryRepository.findById(id).orElseThrow(()
+//                -> new RuntimeException("not.found.category.id."+id));
+//        return categoryMapper.toCategoryResponseDTO(category);
+//    }
+//
     @Override
     public List<CategoryResponseDTO> getAll() {
         User user = userService.getUserByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName()
         );
-        return categoryMapper.toListCategoryResponse(
-                categoryRepository.findByUserId(user.getUserId())
-        );
+        return categoryMapper.toListCategoryResponseDTO(
+                categoryRepository.findByUserIdOrderByIdDesc(user.getId()));
     }
-
-    @Override
-    public String deleteCate(Long id) {
-        try {
-            Category category = getById(id);
-            category.setDeletedAt(LocalDate.now());
-            categoryRepository.save(category);
-            return "SUCCESS";
-        } catch (RuntimeException e) {
-            throw new RuntimeException("error.delete.category.id." + id + "." +e);
-        }
-    }
-    @Override
-    public String setCategory(Long id, CategoryRequestDTO categoryRequestDTO) {
-        try {
-            Category category = getById(id);
-            category.setName(categoryRequestDTO.getName());
-            category.setDescription(categoryRequestDTO.getDescription());
-            categoryRepository.save(category);
-            return "SUCCESS";
-        } catch (RuntimeException e) {
-            throw new RuntimeException("error.set.category." + e);
-        }
-    }
+//
+//    @Override
+//    public String deleteCate(Long id) {
+//        try {
+//            Category category = getById(id);
+//            category.setDeletedAt(LocalDate.now());
+//            categoryRepository.save(category);
+//            return "SUCCESS";
+//        } catch (RuntimeException e) {
+//            throw new RuntimeException("error.delete.category.id." + id + "." +e);
+//        }
+//    }
+//    @Override
+//    public String setCategory(Long id, CategoryRequestDTO categoryRequestDTO) {
+//        try {
+//            Category category = getById(id);
+//            category.setName(categoryRequestDTO.getName());
+//            category.setDescription(categoryRequestDTO.getDescription());
+//            categoryRepository.save(category);
+//            return "SUCCESS";
+//        } catch (RuntimeException e) {
+//            throw new RuntimeException("error.set.category." + e);
+//        }
+//    }
 }

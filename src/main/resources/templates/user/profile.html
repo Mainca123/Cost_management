@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Thông tin cá nhân</title>
+	<link rel="stylesheet" href="/user/profile.css">
+	<link rel="stylesheet" href="/home/home.css">
+</head>
+
+<body>
+
+	<!-- ========== HEADER ========== -->
+	<header class="header">
+		<div class="title">HỆ THỐNG QUẢN LÝ CHI TIÊU THÔNG MINH</div>
+
+		<div class="user-box" id="userBox">
+			<!-- NÚT CHUÔNG -->
+			<div class="notify-icon" onclick="toggleNotify()">
+				🔔
+				<span class="notify-badge">10+</span>
+			</div>
+
+			<img data-href="/page/profile" src="/home/hinhNenMacDinh.png" />
+			<span class="username">main ca</span>
+			<button class="btn btn-logout" onclick="logout()">Đăng xuất</button>
+		</div>
+
+		<!--		<div class="user-box" id="guestBox">-->
+		<div class="user-box" id="guestBox">
+			<button class="btn btn-login" onclick="openLogin()">Đăng nhập</button>
+			<button class="btn btn-signup" onclick="openRegister()">Đăng ký</button>
+		</div>
+		<!--		</div>-->
+	</header>
+
+	<!-- MENU CHUÔNG -->
+	<div class="notify-menu" id="notifyMenu">
+		<div>🔸 Chi tiêu hôm nay đã vượt 20%</div>
+		<div>🔸 Bạn có khoản chi chưa ghi chú</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+	</div>
+
+	<!-- ========== MENU BAR ========== -->
+	<nav class="menu-bar">
+		<button class="tab-btn" id="tabHome" data-href="/page/home">Trang chủ</button>
+
+		<div class="dropdown">
+			<button class="tab-btn" id="tabFunc" onclick="toggleMenu()">Chức năng ▾</button>
+
+			<div class="dropdown-menu" id="dropdownMenu">
+				<div data-href="/page/category">Quản lý danh mục</div>
+				<div data-href="/page/expense">Quản lý khoản chi</div>
+				<div data-href="/page/budget">Quản lý ngân sách</div>
+			</div>
+		</div>
+	</nav>
+
+	<div class="profile-container">
+		<!-- HEADER -->
+		<div class="profile-header">
+			<img src="../home/hinhNenMacDinh.png" class="avatar">
+			<div class="user-main">
+				<h2 id="fullName">Nguyễn Văn A</h2>
+				<span id="username">@username</span>
+			</div>
+		</div>
+
+		<!-- INFO CARD -->
+		<div class="card">
+			<h3>Thông tin cá nhân</h3>
+
+			<div class="info-grid">
+				<div class="info-item">
+					<label>Email</label>
+					<span id="email">example@email.com</span>
+				</div>
+
+				<div class="info-item">
+					<label>Số điện thoại</label>
+					<span id="phone">---</span>
+				</div>
+
+				<div class="info-item">
+					<label>Ngày sinh</label>
+					<span id="dob">---</span>
+				</div>
+
+				<div class="info-item">
+					<label>Giới tính</label>
+					<span id="gender">---</span>
+				</div>
+
+				<div class="info-item full">
+					<label>Địa chỉ</label>
+					<span id="address">---</span>
+				</div>
+			</div>
+
+			<div class="actions">
+				<button class="btn btn-primary" onclick="openEdit()">✏️ Sửa thông tin</button>
+				<button class="btn btn-outline" onclick="openPassword()">🔒 Đổi mật khẩu</button>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- ===== MODAL EDIT PROFILE ===== -->
+	<div class="modal" id="editModal">
+		<div class="modal-box">
+			<h3>Sửa thông tin</h3>
+
+			<label>Họ tên</label>
+			<input id="editFullName">
+
+			<label>Số điện thoại</label>
+			<input id="editPhone">
+
+			<label>Ngày sinh</label>
+			<input type="date" id="editDob">
+
+			<label>Giới tính</label>
+			<select id="editGender">
+				<option value="">-- Chọn --</option>
+				<option>Nam</option>
+				<option>Nữ</option>
+				<option>Khác</option>
+			</select>
+
+			<label>Địa chỉ</label>
+			<textarea id="editAddress"></textarea>
+
+			<div class="modal-actions">
+				<button class="btn btn-primary" onclick="saveProfile()">Lưu</button>
+				<button class="btn btn-cancel" onclick="closeModal()">Hủy</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ===== MODAL CHANGE PASSWORD ===== -->
+	<div class="modal" id="passwordModal">
+		<div class="modal-box">
+			<h3>Đổi mật khẩu</h3>
+
+			<label>Mật khẩu cũ</label>
+			<input type="password" id="oldPassword">
+
+			<label>Mật khẩu mới</label>
+			<input type="password" id="newPassword">
+
+			<label>Xác nhận mật khẩu</label>
+			<input type="password" id="confirmPassword">
+
+			<div class="modal-actions">
+				<button class="btn btn-primary" onclick="changePassword()">Đổi mật khẩu</button>
+				<button class="btn btn-cancel" onclick="closeModal()">Hủy</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="/config/header.js"></script>
+	<script src="/user/profile.js"></script>
+</body>
+
+</html>

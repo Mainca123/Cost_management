@@ -32,10 +32,15 @@ public class SecurityConfig {
             "api/v1/auth/**",
             "/auth/**",
             "/auth/set-front",
-            "/page/**"
-//            "/login",
-//            "/home",
-//            "/information"
+            "/page/**",
+            "/home/**",
+            "/auth/**",
+            "/budget/**",
+            "/category/**",
+            "/expense/**",
+            "/config/**",
+            "/user/**",
+            "/favicon.ico"
     };
 
     @Bean
@@ -59,8 +64,8 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(List.of(
+                "http://127.0.0.1:54110",
                 "http://127.0.0.1:5500",
-                "https://hit-network-system.onrender.com",
                 "http://localhost:5174",
                 "https://hitnetwork.onrender.com"
         ));

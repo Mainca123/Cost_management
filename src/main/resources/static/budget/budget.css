@@ -1,0 +1,216 @@
+/* ===============================
+   PAGE HEADER
+================================ */
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  height: 60px;
+}
+
+.page-head h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0044ff;
+}
+
+/* ===============================
+   TABLE
+================================ */
+.data-table {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 14px;
+  border-collapse: collapse;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.data-table thead {
+  background: #f1f5ff;
+}
+
+.data-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 18px;
+  font-weight: 700;
+  color: #334155;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.data-table td {
+  padding: 14px 16px;
+  font-size: 16px;
+  color: #1f2937;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+  background: #f8fbff;
+}
+
+/* ===============================
+   ACTIVE ROW (HÔM NAY)
+================================ */
+.row-active {
+  background: #e8f9e6 !important;
+  font-weight: 600;
+  border-left: 6px solid #22c55e;
+}
+
+.row-active td {
+  color: #14532d;
+}
+
+/* ===============================
+   COLUMN WIDTH
+================================ */
+.data-table td:nth-child(1) {
+  width: 35%;
+  font-weight: 600;
+}
+
+.data-table td:nth-child(2) {
+  width: 20%;
+  color: #166534;
+  font-weight: 600;
+}
+
+.data-table td:nth-child(3) {
+  width: 25%;
+  color: #475569;
+  font-size: 15px;
+}
+
+.data-table td:last-child {
+  width: 140px;
+  text-align: right;
+}
+
+/* ===============================
+   ACTION BUTTONS
+================================ */
+.btn-login {
+  background: #22c55e;
+  border: none;
+  color: #fff;
+  padding: 6px 14px;
+  font-size: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-login:hover {
+  background: #16a34a;
+}
+
+/* ===============================
+   MODAL
+================================ */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.45);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  width: 420px;
+  background: #ebfaff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+  animation: fadeUp 0.25s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-box h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 18px;
+  color: #0c65f4;
+}
+
+/* ===============================
+   FORM
+================================ */
+.modal-box label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #475569;
+  margin-top: 12px;
+  display: block;
+}
+
+.modal-box input {
+  width: 93%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.modal-box input:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+}
+
+/* ===============================
+   MODAL ACTIONS
+================================ */
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(34,197,94,0.35);
+  height: 90%;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+}
+
+.btn-edit {
+  background: #3b82f6;
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 5px 8px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(94, 1, 255, 0.35);
+}
+
+.btn-delete {
+  background: #ff1212;
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 5px 8px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(255, 200, 0, 0.35);
+}

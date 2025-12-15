@@ -13,29 +13,29 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
 
     private final CategoryService categoryService;
-
-    @GetMapping("/user/category")
-    public ResponseEntity<?> getCategory(@RequestParam Long id){
-        return VsResponseUtil.success(categoryService.getCate(id));
-    }
-
+//
+//    @GetMapping("/user/category")
+//    public ResponseEntity<?> getCategory(@RequestParam Long id){
+//        return VsResponseUtil.success(categoryService.getCate(id));
+//    }
+//
     @GetMapping("/user/categories")
     public ResponseEntity<?> getAllCategory(){
         return VsResponseUtil.success(categoryService.getAll());
     }
-
-    @PutMapping("/user/category")
-    public ResponseEntity<?> setCategory(@RequestParam Long id, @RequestBody CategoryRequestDTO categoryRequestDTO){
-        return VsResponseUtil.success(categoryService.setCategory(id, categoryRequestDTO));
-    }
-
-    @PostMapping("/user/category")
+//
+//    @PutMapping("/user/category")
+//    public ResponseEntity<?> setCategory(@RequestParam Long id, @RequestBody CategoryRequestDTO categoryRequestDTO){
+//        return VsResponseUtil.success(categoryService.setCategory(id, categoryRequestDTO));
+//    }
+//
+    @PostMapping("/user/categories")
     public ResponseEntity<?> createCategory(@RequestBody CategoryRequestDTO categoryRequestDTO){
         return VsResponseUtil.success(categoryService.create(categoryRequestDTO));
     }
-
-    @DeleteMapping("/user/category")
-    public ResponseEntity<?> delete(@RequestParam Long id){
-        return VsResponseUtil.success(categoryService.deleteCate(id));
-    }
+//
+//    @DeleteMapping("/user/category")
+//    public ResponseEntity<?> delete(@RequestParam Long id){
+//        return VsResponseUtil.success(categoryService.deleteCate(id));
+//    }
 }

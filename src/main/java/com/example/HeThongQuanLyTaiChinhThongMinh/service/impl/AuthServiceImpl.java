@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +29,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         User user = userService.getUserByEmail(loginRequestDTO.getEmail());
-        if(!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPasswordHash()))
+        if(!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword()))
             throw new RuntimeException("invalid.information.login");
         return LoginResponseDTO.builder().token(
-                tokenService.generateAccessToken(user.getUsername(), String.valueOf(user.getUserId())))
+                tokenService.generateAccessToken(user.getUsername(), String.valueOf(user.getId())))
                 .build();
     }
 
@@ -37,19 +40,20 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public String register(RegisterRequestDTO registerRequestDTO) {
         try {
+            String username =
+                    java.text.Normalizer.normalize(registerRequestDTO.getFullName(), java.text.Normalizer.Form.NFD)
+                            .replaceAll("\\p{M}+", "").toLowerCase().trim()
+                            .replaceAll("[^a-z0-9 ]", "").replaceAll("\\s+", ".");
+            username += (userRepository.count() + 1);
             User user = User.builder()
                     .fullName(registerRequestDTO.getFullName())
                     .email(registerRequestDTO.getEmail())
-                    .phone(registerRequestDTO.getPhoneNumber())
-                    .username(registerRequestDTO.getUsername())
-                    .passwordHash(passwordEncoder.encode(registerRequestDTO.getPassword()))
-                    .gender(registerRequestDTO.getGender())
+                    .username(username)
+                    .password(passwordEncoder.encode(registerRequestDTO.getPassword()))
+                    .createdAt(LocalDateTime.now())
                     .role(2).build();
-            if(userRepository.findByEmail(registerRequestDTO.getEmail()).isPresent()){
+            if(userRepository.findByEmailAndDeletedAtIsNull(registerRequestDTO.getEmail()).isPresent()){
                 throw new RuntimeException("same.email");
-            }
-            if(userRepository.findByUsername(registerRequestDTO.getUsername()).isPresent()){
-                throw new RuntimeException("same.username");
             }
             userService.save(user);
             return "SUCCESS";

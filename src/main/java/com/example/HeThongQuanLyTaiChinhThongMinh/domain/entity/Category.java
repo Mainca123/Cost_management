@@ -1,17 +1,14 @@
 package com.example.HeThongQuanLyTaiChinhThongMinh.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "category")
-@Data
+@Table(name = "categories")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -19,21 +16,20 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long categoryId;
-
-    private String name;
-    private String description;
-    private LocalDate deletedAt;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "category")
-    private List<Transaction> transactions;
+    @Column(nullable = false, length = 100)
+    private String name;
 
-    @OneToMany(mappedBy = "category")
-    private List<Budget> budgets;
+    @Column(length = 255)
+    private String description;
 
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
+    private LocalDateTime deletedAt;
 }

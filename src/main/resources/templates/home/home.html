@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Trang chủ - Quản lý chi tiêu</title>
+	<link rel="stylesheet" href="/home/home.css" />
+</head>
+
+<body>
+
+	<!-- ========== HEADER ========== -->
+	<header class="header">
+		<div class="title">HỆ THỐNG QUẢN LÝ CHI TIÊU THÔNG MINH</div>
+
+		<div class="user-box" id="userBox">
+			<!-- NÚT CHUÔNG -->
+			<div class="notify-icon" onclick="toggleNotify()">
+				🔔
+				<span class="notify-badge">10+</span>
+			</div>
+
+			<img data-href="/page/profile" src="/home/hinhNenMacDinh.png" />
+			<span class="username">main ca</span>
+			<button class="btn btn-logout" onclick="logout()">Đăng xuất</button>
+		</div>
+
+		<div class="user-box" id="guestBox">
+			<button class="btn btn-login" onclick="openLogin()">Đăng nhập</button>
+			<button class="btn btn-signup" onclick="openRegister()">Đăng ký</button>
+		</div>
+	</header>
+
+	<!-- MENU CHUÔNG -->
+	<div class="notify-menu" id="notifyMenu">
+		<div>🔸 Chi tiêu hôm nay đã vượt 20%</div>
+		<div>🔸 Bạn có khoản chi chưa ghi chú</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+	</div>
+
+	<!-- ========== MENU BAR ========== -->
+	<nav class="menu-bar">
+		<button class="tab-btn" id="tabHome" data-href="/page/home">Trang chủ</button>
+
+		<div class="dropdown">
+			<button class="tab-btn" id="tabFunc" onclick="toggleMenu()">Chức năng ▾</button>
+
+			<div class="dropdown-menu" id="dropdownMenu">
+				<div data-href="/page/category">Quản lý danh mục</div>
+				<div data-href="/page/expense">Quản lý khoản chi</div>
+				<div data-href="/page/budget">Quản lý ngân sách</div>
+			</div>
+		</div>
+	</nav>
+
+	<!-- ========== MAIN CONTENT ========== -->
+	<div class="container">
+
+		<div class="panel">
+
+			<!-- Thêm khoản chi -->
+			<div class="box">
+				<div class="box-head">
+					<h3>Thêm khoản chi</h3>
+					<span class="box-sub">Ghi nhanh, rõ ràng, không lạc nhịp</span>
+				</div>
+
+				<div class="form-grid">
+					<div class="field">
+						<label>Đã chi (VND)</label>
+						<input id="expenseAmount" type="number" placeholder="VD: 120000" />
+					</div>
+
+					<div class="field">
+						<label>Danh mục</label>
+						<select id="expenseCategory">
+							<option value="">-- Chọn danh mục --</option>
+						</select>
+					</div>
+
+					<div class="field field-full">
+						<label>Ghi chú</label>
+						<textarea id="expenseNote" placeholder="VD: ăn trưa + trà sữa"></textarea>
+					</div>
+				</div>
+
+				<div class="box-actions">
+					<button class="btn btn-primary" id="btnAddExpense" onclick="createExpense()">Thêm</button>
+
+					<div class="stat-line">
+						<span class="stat-label">Tổng số tiền đã chi:</span>
+						<span class="stat-value stat-ok" id="spentValue">0 VND</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Thiết lập ngân sách -->
+			<div class="box">
+				<div class="box-head">
+					<h3>Thiết lập ngân sách</h3>
+					<span class="box-sub">Đặt giới hạn để tiền không “trốn”</span>
+				</div>
+
+				<div class="form-grid">
+					<div class="field">
+						<label>Ngân sách (VND) *</label>
+						<input id="budgetAmount" type="number" placeholder="VD: 3000000" />
+					</div>
+					<br>
+					<div class="field">
+						<label>Bắt đầu</label>
+						<input id="budgetStart" type="date" />
+					</div>
+					<div class="field">
+						<label>Kết thúc</label>
+						<input id="budgetEnd" type="date" />
+					</div>
+
+					<div class="field">
+						<label>Ghi chú</label>
+						<input id="budgetNote" type="text" placeholder="VD: ngân sách tháng 12" />
+					</div>
+				</div>
+
+				<div class="box-actions">
+					<button class="btn btn-primary" id="btnSetBudget" onclick="createBudget()">Thiết lập</button>
+
+					<div class="stat-line">
+						<span class="stat-label">Số tiền còn lại có thể chi:</span>
+						<span class="stat-value stat-warn" id="remainValue">0 VND</span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- BIỂU ĐỒ -->
+		<h3>Thống kê</h3>
+
+		<div class="chart-toolbar">
+			<div class="year-picker">
+				<label for="yearSelect">Năm</label>
+				<select id="yearSelect"></select>
+			</div>
+
+			<div class="chart-note">
+				Quy đổi: <strong>1000 VND = 1k</strong>
+			</div>
+		</div>
+
+
+		<div class="chart-box">
+			<canvas id="chartCanvas"></canvas>
+		</div>
+
+
+		<!-- ========== AUTH OVERLAY ========== -->
+		<div class="auth-overlay" id="authOverlay">
+
+			<!-- LOGIN -->
+			<div class="auth-modal" id="loginModal">
+				<h2>Đăng nhập</h2>
+
+				<b>Email</b> <br>
+				<input id="loginEmail" type="email" placeholder="Nhập email của bạn"> <br>
+				<b>Mật khẩu</b><br>
+				<div class="password-field">
+					<input id="loginPassword" type="password" placeholder="Nhập mật khẩu">
+					<span class="toggle-password" onclick="togglePassword('loginPassword', this)">👁️</span>
+				</div>
+
+				<button onclick="login()">Đăng nhập</button>
+
+				<p class="switch">
+					<a style="text-align: center;" onclick="">Quên mật khẩu !</a> <br>
+					Chưa có tài khoản?
+					<a onclick="openRegister()">Đăng ký</a>
+				</p>
+
+				<p class="error" id="loginError"></p>
+			</div>
+
+			<!-- REGISTER -->
+			<div class="auth-modal" id="registerModal">
+				<h2>Đăng ký</h2>
+
+				<b>Họ Tên</b> <br>
+				<input id="regName" type="text" placeholder="Họ tên">
+				<b>Email</b> <br>
+				<input id="regEmail" type="email" placeholder="Email">
+				<b>Mật khẩu</b><br>
+				<div class="password-field">
+					<input id="regPassword" type="password" placeholder="Mật khẩu">
+					<span class="toggle-password" onclick="togglePassword('regPassword', this)">👁️</span>
+				</div>
+
+				<button onclick="register()">Đăng ký</button>
+
+				<p class="switch">
+					Đã có tài khoản?
+					<a onclick="openLogin()">Đăng nhập</a>
+				</p>
+
+				<p class="error" id="registerError"></p>
+			</div>
+
+		</div>
+
+	</div>
+
+	<script src="/home/home.js"></script>
+	<script src="/auth/auth.js"></script>
+
+</body>
+
+</html>

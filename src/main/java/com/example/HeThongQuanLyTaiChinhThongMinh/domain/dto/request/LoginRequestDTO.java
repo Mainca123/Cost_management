@@ -2,19 +2,17 @@ package com.example.HeThongQuanLyTaiChinhThongMinh.domain.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 public class LoginRequestDTO {
 
-    @NotBlank(message = "Not null email")
-    @Email(message = "Not correct from email")
+    @NotBlank
     private String email;
 
-    @NotBlank(message = "Not null password")
+    @NotBlank
     private String password;
 }

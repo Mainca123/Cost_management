@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Quản lý ngân sách</title>
+	<link rel="stylesheet" href="/home/home.css">
+	<link rel="stylesheet" href="/budget/budget.css">
+</head>
+
+<body>
+
+	<!-- ========== HEADER ========== -->
+	<header class="header">
+		<div class="title">HỆ THỐNG QUẢN LÝ CHI TIÊU THÔNG MINH</div>
+
+		<div class="user-box" id="userBox">
+			<!-- NÚT CHUÔNG -->
+			<div class="notify-icon" onclick="toggleNotify()">
+				🔔
+				<span class="notify-badge">10+</span>
+			</div>
+
+			<img data-href="/page/profile" src="/home/hinhNenMacDinh.png" />
+			<span class="username">main ca</span>
+			<button class="btn btn-logout" onclick="logout()">Đăng xuất</button>
+		</div>
+
+		<div class="user-box" id="guestBox">
+			<button class="btn btn-login" onclick="openLogin()">Đăng nhập</button>
+			<button class="btn btn-signup" onclick="openRegister()">Đăng ký</button>
+		</div>
+	</header>
+
+	<!-- MENU CHUÔNG -->
+	<div class="notify-menu" id="notifyMenu">
+		<div>🔸 Chi tiêu hôm nay đã vượt 20%</div>
+		<div>🔸 Bạn có khoản chi chưa ghi chú</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+		<div>🔸 Ngân sách tháng còn 35%</div>
+	</div>
+
+	<!-- ========== MENU BAR ========== -->
+	<nav class="menu-bar">
+		<button class="tab-btn" id="tabHome" data-href="/page/home">Trang chủ</button>
+
+		<div class="dropdown">
+			<button class="tab-btn" id="tabFunc" onclick="toggleMenu()">Chức năng ▾</button>
+
+			<div class="dropdown-menu" id="dropdownMenu">
+				<div data-href="/page/category">Quản lý danh mục</div>
+				<div data-href="/page/expense">Quản lý khoản chi</div>
+				<div data-href="/page/budget">Quản lý ngân sách</div>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+		<div class="page-head">
+			<h2>Quản lý ngân sách</h2>
+			<button class="btn btn-primary" onclick="openForm()">+ Thiết lập ngân sách</button>
+		</div>
+
+		<table class="data-table">
+			<thead>
+				<tr>
+					<th>Thời gian</th>
+					<th>Giới hạn</th>
+					<th>Ngày tạo</th>
+					<th class="col-action"></th>
+				</tr>
+			</thead>
+			<tbody id="budgetTable"></tbody>
+		</table>
+	</div>
+
+	<!-- MODAL -->
+	<div class="modal" id="budgetModal">
+		<div class="modal-box">
+			<h3 id="modalTitle">Ngân sách</h3>
+
+			<label>Bắt đầu</label>
+			<input type="date" id="startDate">
+
+			<label>Kết thúc</label>
+			<input type="date" id="endDate">
+
+			<label>Giới hạn (VND)</label>
+			<input type="number" id="limitAmount" placeholder="VD: 5000000">
+
+			<div class="modal-actions">
+				<button class="btn btn-primary" onclick="saveBudget()">Lưu</button>
+				<button class="btn btn-logout" onclick="closeForm()">Hủy</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="/config/header.js"></script>
+	<script src="/budget/budget.js"></script>
+</body>
+
+</html>

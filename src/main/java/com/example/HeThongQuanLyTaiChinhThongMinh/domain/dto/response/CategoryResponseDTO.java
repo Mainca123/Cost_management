@@ -1,16 +1,17 @@
 package com.example.HeThongQuanLyTaiChinhThongMinh.domain.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
 @Builder
 public class CategoryResponseDTO {
-    private Long categoryId;
+    private Long id;
     private String name;
     private String description;
+    private LocalDateTime createdAt;
 }

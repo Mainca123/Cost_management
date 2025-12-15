@@ -1,14 +1,14 @@
 package com.example.HeThongQuanLyTaiChinhThongMinh.domain.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class CategoryRequestDTO {
+    @NotBlank
     private String name;
     private String description;
 }
-

@@ -1,19 +1,14 @@
 package com.example.HeThongQuanLyTaiChinhThongMinh.domain.entity;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
-@Data
+@Table(name = "users")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -21,42 +16,25 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(nullable = false, unique = true, length = 50)
     private String username;
 
     @Column(nullable = false, length = 255)
-    private String passwordHash;
+    private String password;
 
     @Column(length = 100)
     private String fullName;
 
-    @Column(length = 15)
-    private String gender;
-
-    @Column(length = 15)
-    private String phone;
-
-    @Column(length = 100, unique = true, nullable = false)
+    @Column(unique = true, length = 100)
     private String email;
 
-    private Integer role;
+    @Column(nullable = false)
+    private int role;
 
-    private Date deletedAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
-    // Relationships
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Transaction> transactions;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Category> categories;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<SavingGoal> savingGoals;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<BankUser> bankUsers;
-
-    // Getter & Setter
+    private LocalDateTime deletedAt;
 }
