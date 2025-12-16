@@ -101,7 +101,7 @@ public class BudgetServiceImpl implements BudgetService {
 
         // Trừ ngân sách (không cho âm nếu không muốn)
         double remain = currentLimit - amount;
-        budget.setLimitAmount(Math.max(remain, 0));
+        budget.setLimitAmount(remain);
 
         budgetRepository.save(budget);
 

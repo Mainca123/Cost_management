@@ -81,7 +81,7 @@ async function refreshHomeStats() {
 
     setStat(
       document.getElementById("remainValue"),
-      remainSafe,
+      totalBudget,
       tone
     );
 

@@ -20,7 +20,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
             "SELECT COALESCE(SUM(e.amount), 0) " +
                     "FROM Expense e " +
                     "WHERE e.user.id = :userId " +
-                    "AND e.spentAt BETWEEN :start AND :end " +
+                    "AND e.spentAt >= :start " +
+                    "AND e.spentAt < :end " +
                     "AND e.deletedAt IS NULL"
     )
     Double sumExpenseByUserAndDateRange(
