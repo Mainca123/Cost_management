@@ -22,7 +22,7 @@ public class HeThongQuanLyTaiChinhThongMinhApplication {
 		log.info("   Application         : {}", appName);
 		log.info("   Swagger UI          : http://localhost:{}/swagger-ui/index.html", port);
 		log.info("   OpenAPI Docs        : http://localhost:{}/v3/api-docs", port);
-		log.info("   URL Login           : http://localhost:{}/page/login", port);
+		log.info("   URL Login           : http://localhost:{}/page/home", port);
 		log.info("------------------------- START SUCCESS {} -----------------------", appName);
 	}
 }

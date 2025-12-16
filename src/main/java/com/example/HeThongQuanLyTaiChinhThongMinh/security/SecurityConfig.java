@@ -29,7 +29,7 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-resources/**",
             "/webjars/**",
-            "api/v1/auth/**",
+            "/api/v1/auth/**",
             "/auth/**",
             "/auth/set-front",
             "/page/**",
@@ -65,8 +65,10 @@ public class SecurityConfig {
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(List.of(
                 "http://127.0.0.1:54110",
+                "http://127.0.0.1:62661",
                 "http://127.0.0.1:5500",
                 "http://localhost:5174",
+                "http://localhost:8080",
                 "https://cost-management-na38.onrender.com"
         ));
         corsConfiguration.setAllowedHeaders(List.of("Origin", "Content-Type", "Accept", "Authorization"));

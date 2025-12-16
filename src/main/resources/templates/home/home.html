@@ -174,7 +174,8 @@
 					<span class="toggle-password" onclick="togglePassword('loginPassword', this)">👁️</span>
 				</div>
 
-				<button onclick="login()">Đăng nhập</button>
+				<button id="loginBtn" onclick="login()">Đăng nhập</button>
+				<span id="loginStatus" class="auth-status"></span>
 
 				<p class="switch">
 					<a style="text-align: center;" onclick="">Quên mật khẩu !</a> <br>
@@ -199,7 +200,8 @@
 					<span class="toggle-password" onclick="togglePassword('regPassword', this)">👁️</span>
 				</div>
 
-				<button onclick="register()">Đăng ký</button>
+				<button id="registerBtn" onclick="register()">Đăng ký</button>
+				<span id="registerStatus" class="auth-status"></span>
 
 				<p class="switch">
 					Đã có tài khoản?

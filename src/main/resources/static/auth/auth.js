@@ -1,13 +1,57 @@
 /* =============================
         AUTH CONFIG
 ============================= */
-const AUTH_API = `${window.location.origin}/api/v1/auth`;
+const AUTH_API = "https://cost-management-na38.onrender.com/api/v1/auth";
+const TOKEN_KEY = "ACCESS_TOKEN";
 
+/* =============================
+        DEBUG CONFIG
+============================= */
+const DEBUG = true;
+
+function log(...args) {
+  if (DEBUG) console.log("[AUTH]", ...args);
+}
+
+function logError(...args) {
+  if (DEBUG) console.error("[AUTH ❌]", ...args);
+}
+
+/* =============================
+        LOADING STATE
+============================= */
+function setLoading(type, isLoading, message = "") {
+  const btn = document.getElementById(type + "Btn");
+  const statusEl = document.getElementById(type + "Status");
+
+  if (btn) btn.disabled = isLoading;
+
+  if (statusEl) {
+    statusEl.textContent = isLoading ? message : "";
+    statusEl.classList.toggle("loading", isLoading);
+  }
+
+  log(`🔄 ${type.toUpperCase()} loading =`, isLoading);
+}
+
+/* =============================
+        VALIDATION
+============================= */
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidPassword(password) {
+  // ≥8 ký tự, 1 hoa, 1 thường, 1 số
+  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
+}
 
 /* =============================
         LOGIN
 ============================= */
 async function login() {
+  log("➡️ login() called");
+
   const email = document.getElementById("loginEmail")?.value.trim();
   const password = document.getElementById("loginPassword")?.value.trim();
   const errorEl = document.getElementById("loginError");
@@ -18,6 +62,8 @@ async function login() {
     if (errorEl) errorEl.textContent = "Vui lòng nhập email và mật khẩu";
     return;
   }
+
+  setLoading("login", true, "Đang đăng nhập...");
 
   try {
     const res = await fetch(`${AUTH_API}/login`, {
@@ -30,6 +76,7 @@ async function login() {
     });
 
     const data = await res.json();
+    log("📡 Login response:", data);
 
     if (!res.ok) {
       if (errorEl)
@@ -37,31 +84,28 @@ async function login() {
       return;
     }
 
-    // ✅ LƯU TOKEN
     localStorage.setItem(TOKEN_KEY, data.data.token);
+    log("✅ Token saved");
 
-    // Đóng modal + cập nhật UI
-    closeAuth();
-    updateUI();
-	window.location.href = "/page/home";
+    closeAuth?.();
+    updateUI?.();
+
+    window.location.href = "/page/home";
+
   } catch (err) {
-    if (errorEl)
-      errorEl.textContent = "Không kết nối được server";
+    logError("Login exception:", err);
+    if (errorEl) errorEl.textContent = "Không kết nối được server";
+  } finally {
+    setLoading("login", false);
   }
 }
 
 /* =============================
         REGISTER
 ============================= */
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function isValidPassword(password) {
-  // ≥8 ký tự, 1 hoa, 1 thường, 1 số
-  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
-}
 async function register() {
+  log("➡️ register() called");
+
   const fullName = document.getElementById("regName")?.value.trim();
   const email = document.getElementById("regEmail")?.value.trim();
   const password = document.getElementById("regPassword")?.value.trim();
@@ -69,27 +113,24 @@ async function register() {
 
   if (errorEl) errorEl.textContent = "";
 
-  // ❌ Thiếu dữ liệu
   if (!fullName || !email || !password) {
-    if (errorEl)
-      errorEl.textContent = "Vui lòng nhập đầy đủ thông tin";
+    if (errorEl) errorEl.textContent = "Vui lòng nhập đầy đủ thông tin";
     return;
   }
 
-  // ❌ Email sai định dạng
   if (!isValidEmail(email)) {
-    if (errorEl)
-      errorEl.textContent = "Email không đúng định dạng";
+    if (errorEl) errorEl.textContent = "Email không đúng định dạng";
     return;
   }
 
-  // ❌ Password không đủ mạnh
   if (!isValidPassword(password)) {
     if (errorEl)
       errorEl.textContent =
         "Mật khẩu phải ≥ 8 ký tự, gồm chữ hoa, chữ thường và số";
     return;
   }
+
+  setLoading("register", true, "Đang đăng ký...");
 
   try {
     const res = await fetch(`${AUTH_API}/register`, {
@@ -102,6 +143,7 @@ async function register() {
     });
 
     const data = await res.json();
+    log("📡 Register response:", data);
 
     if (!res.ok) {
       if (errorEl)
@@ -109,27 +151,29 @@ async function register() {
       return;
     }
 
-    // ✅ Thành công → quay lại login
-    openLogin();
+    openLogin?.();
 
   } catch (err) {
-    if (errorEl)
-      errorEl.textContent = "Không kết nối được server";
+    logError("Register exception:", err);
+    if (errorEl) errorEl.textContent = "Không kết nối được server";
+  } finally {
+    setLoading("register", false);
   }
 }
-
 
 /* =============================
         LOGOUT
 ============================= */
 function logout() {
-  // ❌ Xoá token
+  log("➡️ logout() called");
+
   localStorage.removeItem(TOKEN_KEY);
+  log("🧹 Token removed");
 
-  // Đóng menu nếu đang mở
-  document.getElementById("dropdownMenu")?.style.setProperty("display", "none");
+  document.getElementById("dropdownMenu")
+    ?.style.setProperty("display", "none");
 
-  // Cập nhật UI
-  updateUI();
+  updateUI?.();
+
   window.location.href = "/page/home";
 }

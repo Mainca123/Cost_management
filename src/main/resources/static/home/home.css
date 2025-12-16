@@ -559,3 +559,18 @@ canvas {
   color: #555;
   font-style: italic;
 }
+
+.auth-status {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.auth-status.loading {
+  color: #0d6efd;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
