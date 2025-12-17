@@ -1,5 +1,6 @@
 package com.example.HeThongQuanLyTaiChinhThongMinh.service.impl;
 
+import com.example.HeThongQuanLyTaiChinhThongMinh.domain.dto.response.UserResponseDTO;
 import com.example.HeThongQuanLyTaiChinhThongMinh.domain.entity.User;
 import com.example.HeThongQuanLyTaiChinhThongMinh.domain.mapstruct.UserMapper;
 import com.example.HeThongQuanLyTaiChinhThongMinh.repository.UserRepository;
@@ -26,13 +27,13 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-//    @Override
-//    public SetUserResponseDTO getMe() {
-//        return userMapper
-//                .toSetUserResponseDTO(
-//                        getUserByUsername(
-//                                SecurityContextHolder.getContext().getAuthentication().getName()));
-//    }
+    @Override
+    public UserResponseDTO getMe() {
+        return userMapper.toUserResponseDTO(
+                getUserByUsername(
+                        SecurityContextHolder.getContext().getAuthentication().getName()
+                ));
+    }
 
     @Override
     public void save(User user) {

@@ -10,4 +10,7 @@ public interface ExpenseService {
     List<ExpenseResponseDTO> getAll();
     double sumExpenseByBudget();
     List<Double> statistical(long year);
+    ExpenseResponseDTO getExpense(Long id);
+    String deleteExpense(Long id);
+    String updateExpense(Long id, ExpenseRequestDTO expenseRequestDTO);
 }

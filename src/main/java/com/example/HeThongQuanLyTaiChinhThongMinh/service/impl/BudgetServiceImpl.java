@@ -9,6 +9,7 @@ import com.example.HeThongQuanLyTaiChinhThongMinh.repository.BudgetRepository;
 import com.example.HeThongQuanLyTaiChinhThongMinh.service.BudgetService;
 import com.example.HeThongQuanLyTaiChinhThongMinh.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -156,5 +157,42 @@ public class BudgetServiceImpl implements BudgetService {
                 ? 0.0
                 : budget.getLimitAmount();
     }
+
+    @Override
+    public String setBudget(Long id, Double limitAmount) {
+
+        User user = userService.getUserByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+        );
+
+        Budget budget = budgetRepository
+                .findByIdAndUser_IdAndDeletedAtIsNull(id, user.getId())
+                .orElseThrow(() -> new RuntimeException("budget.not.found"));
+
+        budget.setLimitAmount(limitAmount);
+        budget.setUpdatedAt(LocalDateTime.now());
+
+        budgetRepository.save(budget);
+        return "SUCCESS";
+    }
+
+
+    @Override
+    public String deleteBudget(Long id) {
+
+        User user = userService.getUserByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+        );
+
+        Budget budget = budgetRepository
+                .findByIdAndUser_IdAndDeletedAtIsNull(id, user.getId())
+                .orElseThrow(() -> new RuntimeException("budget.not.found"));
+
+        budget.setDeletedAt(LocalDateTime.now());
+        budgetRepository.save(budget);
+
+        return "SUCCESS";
+    }
+
 
 }

@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface BudgetService {
     String create(BudgetRequestDTO budgetRequestDTO);
-//    BudgetRequestDTO getBudgetAmountLimit(Long categoryId);
-//    Budget findByCategoryId(Long categoryId);
     String setAmountLimit(Double amountLimit);
     List<BudgetResponseDTO> getAll();
     Budget findBudgetNow();
     Double sumExpenseRemaining();
+    String setBudget(Long id, Double limitAmount);
+    String deleteBudget(Long id);
 }

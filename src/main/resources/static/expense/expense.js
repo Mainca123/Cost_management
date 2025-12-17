@@ -3,10 +3,8 @@ const BASE_URL = window.location.origin;
 const API = `${BASE_URL}/api/v1/user/expense`;
 const CATEGORY_API = `${BASE_URL}/api/v1/user/categories`;
 
-const token = localStorage.getItem("ACCESS_TOKEN");
-
-
 let editId = null;
+
 const expenseModal = document.getElementById("expenseModal");
 const modalTitle   = document.getElementById("modalTitle");
 
@@ -14,9 +12,14 @@ const amount  = document.getElementById("amount");
 const note    = document.getElementById("note");
 const spentAt = document.getElementById("spentAt");
 
+/* ================= TOKEN ================= */
+function getToken() {
+  return localStorage.getItem("ACCESS_TOKEN");
+}
 
 /* ================= LOAD EXPENSE ================= */
 async function loadExpense() {
+  const token = getToken();
   if (!token) {
     redirectHome();
     return;
@@ -31,6 +34,11 @@ async function loadExpense() {
     return;
   }
 
+  if (!res.ok) {
+    console.error("Load expense failed");
+    return;
+  }
+
   const json = await res.json();
   const data = json.data || [];
 
@@ -38,9 +46,12 @@ async function loadExpense() {
   tbody.innerHTML = "";
 
   if (data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#888">
-      Chưa có khoản chi nào
-    </td></tr>`;
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align:center;color:#888">
+          Chưa có khoản chi nào
+        </td>
+      </tr>`;
     return;
   }
 
@@ -82,6 +93,9 @@ function clearForm() {
 
 /* ================= EDIT ================= */
 async function editExpense(id) {
+  const token = getToken();
+  if (!token) return redirectHome();
+
   const res = await fetch(`${API}/${id}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -113,8 +127,11 @@ async function editExpense(id) {
 
 /* ================= SAVE ================= */
 async function saveExpense() {
+  const token = getToken();
+  if (!token) return redirectHome();
+
   const body = {
-    categoryId: document.getElementById("categoryId").value,
+    categoryId: Number(document.getElementById("categoryId").value),
     amount: Number(amount.value),
     note: note.value,
     spentAt: spentAt.value || null
@@ -139,6 +156,11 @@ async function saveExpense() {
     return;
   }
 
+  if (!res.ok) {
+    alert("Lưu khoản chi thất bại");
+    return;
+  }
+
   closeForm();
   loadExpense();
 }
@@ -146,6 +168,9 @@ async function saveExpense() {
 /* ================= DELETE ================= */
 async function removeExpense(id) {
   if (!confirm("Xóa khoản chi này?")) return;
+
+  const token = getToken();
+  if (!token) return redirectHome();
 
   const res = await fetch(`${API}/${id}`, {
     method: "DELETE",
@@ -157,11 +182,19 @@ async function removeExpense(id) {
     return;
   }
 
+  if (!res.ok) {
+    alert("Xóa khoản chi thất bại");
+    return;
+  }
+
   loadExpense();
 }
 
 /* ================= LOAD CATEGORY ================= */
 async function loadCategoriesForSelect() {
+  const token = getToken();
+  if (!token) return redirectHome();
+
   const res = await fetch(CATEGORY_API, {
     headers: { Authorization: `Bearer ${token}` }
   });

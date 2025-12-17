@@ -11,8 +11,25 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    Optional<Category> findByIdAndDeletedAtIsNull(Long id);
-    List<Category> findByUserId(Long id);
-    List<Category> findByUserIdOrderByIdDesc(Long id);
 
+    // 🔹 Lấy category theo id + userId + chưa xóa
+    @Query(
+            "SELECT c " +
+                    "FROM Category c " +
+                    "WHERE c.id = :id " +
+                    "AND c.user.id = :userId " +
+                    "AND c.deletedAt IS NULL"
+    )
+    Optional<Category> findValidByIdAndUserId(
+            @Param("id") Long id,
+            @Param("userId") Long userId
+    );
+
+
+    // 🔹 Lấy tất cả category của user (chưa xóa)
+    List<Category> findAllByUser_IdAndDeletedAtIsNull(Long userId);
+
+    // 🔹 Lấy category của user, sắp xếp mới nhất trước
+    List<Category> findAllByUserIdAndDeletedAtIsNullOrderByIdDesc(Long userId);
 }
+

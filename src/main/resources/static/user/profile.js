@@ -1,35 +1,57 @@
-/* ===== MOCK DATA (sau thay bằng API) ===== */
-const profile = {
-  fullName: "Nguyễn Văn A",
-  username: "username",
-  email: "example@email.com",
+const API_ME = "/api/v1/user/me";
+const token = localStorage.getItem("ACCESS_TOKEN");
+
+/* ===== FIX CỨNG CÁC TRƯỜNG CHƯA CÓ API ===== */
+const fixedProfile = {
   phone: "0123456789",
   dob: "2002-10-10",
   gender: "Nam",
   address: "Hà Nội"
 };
 
-/* ===== LOAD DATA ===== */
-function loadProfile() {
-  fullName.innerText = profile.fullName;
-  username.innerText = "@" + profile.username;
-  email.innerText = profile.email;
-  phone.innerText = profile.phone;
-  dob.innerText = profile.dob;
-  gender.innerText = profile.gender;
-  address.innerText = profile.address;
+/* ===== LOAD PROFILE FROM API ===== */
+async function loadProfile() {
+  if (!token) return;
+
+  try {
+    const res = await fetch(API_ME, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) throw new Error("Unauthorized");
+
+    const json = await res.json();
+    const user = json.data;
+
+    // ===== API DATA =====
+    fullName.innerText = user.fullName || user.username;
+    username.innerText = "@" + user.username;
+    email.innerText = user.email;
+
+    // ===== FIX CỨNG =====
+    phone.innerText = fixedProfile.phone;
+    dob.innerText = fixedProfile.dob;
+    gender.innerText = fixedProfile.gender;
+    address.innerText = fixedProfile.address;
+
+  } catch (e) {
+    console.error("Load profile error:", e);
+  }
 }
+
 loadProfile();
 
 /* ===== MODAL ===== */
 function openEdit() {
   editModal.style.display = "flex";
 
-  editFullName.value = profile.fullName;
-  editPhone.value = profile.phone;
-  editDob.value = profile.dob;
-  editGender.value = profile.gender;
-  editAddress.value = profile.address;
+  editFullName.value = fullName.innerText;
+  editPhone.value = fixedProfile.phone;
+  editDob.value = fixedProfile.dob;
+  editGender.value = fixedProfile.gender;
+  editAddress.value = fixedProfile.address;
 }
 
 function openPassword() {
@@ -41,20 +63,26 @@ function closeModal() {
   passwordModal.style.display = "none";
 }
 
-/* ===== SAVE PROFILE ===== */
+/* ===== SAVE PROFILE (HIỆN TẠI CHỈ UPDATE UI) ===== */
 function saveProfile() {
-  profile.fullName = editFullName.value;
-  profile.phone = editPhone.value;
-  profile.dob = editDob.value;
-  profile.gender = editGender.value;
-  profile.address = editAddress.value;
+  // API update sẽ làm sau
+  fullName.innerText = editFullName.value;
 
-  loadProfile();
+  fixedProfile.phone = editPhone.value;
+  fixedProfile.dob = editDob.value;
+  fixedProfile.gender = editGender.value;
+  fixedProfile.address = editAddress.value;
+
+  phone.innerText = fixedProfile.phone;
+  dob.innerText = fixedProfile.dob;
+  gender.innerText = fixedProfile.gender;
+  address.innerText = fixedProfile.address;
+
   closeModal();
-  alert("✅ Cập nhật thông tin thành công");
+  alert("✅ Cập nhật thông tin thành công (local)");
 }
 
-/* ===== CHANGE PASSWORD ===== */
+/* ===== CHANGE PASSWORD (TẠM UI) ===== */
 function changePassword() {
   if (newPassword.value !== confirmPassword.value) {
     alert("❌ Mật khẩu xác nhận không khớp");
@@ -62,5 +90,5 @@ function changePassword() {
   }
 
   closeModal();
-  alert("🔒 Đổi mật khẩu thành công");
+  alert("🔒 Đổi mật khẩu thành công (demo)");
 }

@@ -661,3 +661,48 @@ window.addEventListener("DOMContentLoaded", () => {
   initYearSelect();
 });
 
+
+/* =============================
+        LOAD USER INFO
+============================= */
+async function loadUserInfo() {
+  const token = localStorage.getItem("ACCESS_TOKEN");
+
+  if (!token) {
+    updateUI(false);
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/v1/user/me", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) throw new Error("Unauthorized");
+
+    const json = await res.json();
+    const user = json.data;
+
+    updateUI(true);
+
+    // Ưu tiên fullName, fallback username
+    const usernameEl = document.getElementById("usernameText");
+    if (usernameEl) {
+      usernameEl.innerText = user.fullName || user.username;
+    }
+
+  } catch (e) {
+    // Token sai / hết hạn
+    localStorage.removeItem("ACCESS_TOKEN");
+    updateUI(false);
+  }
+}
+
+/* =============================
+        INIT
+============================= */
+document.addEventListener("DOMContentLoaded", () => {
+  loadUserInfo();
+});

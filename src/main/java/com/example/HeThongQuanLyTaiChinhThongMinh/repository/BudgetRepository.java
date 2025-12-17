@@ -37,7 +37,8 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
 
     @Query("SELECT b FROM Budget b " +
             "WHERE b.user.id = :userId " +
-            "AND b.endDate >= CURRENT_DATE ")
+            "AND b.endDate >= CURRENT_DATE " +
+            "AND b.deletedAt IS NULL")
     List<Budget> getAllByUserId(Long userId);
 
     @Query("SELECT b FROM Budget b " +
@@ -46,4 +47,6 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
             "AND b.user.id = :userId " +
             "AND b.deletedAt IS NULL")
     Optional<Budget> findByDate(long userId, LocalDate now);
+
+    Optional<Budget> findByIdAndUser_IdAndDeletedAtIsNull(Long id, Long userId);
 }

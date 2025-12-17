@@ -8,13 +8,15 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
-    List<Expense> findByUserId(Long id);
+    List<Expense> findByUserIdAndDeletedAtIsNullOrderByIdDesc(Long userId);
 
-    List<Expense> findByUserIdOrderByIdDesc(Long id);
+
+    Optional<Expense> findByIdAndUser_IdAndDeletedAtIsNull(Long id, Long userId);
 
     @Query(
             "SELECT COALESCE(SUM(e.amount), 0) " +

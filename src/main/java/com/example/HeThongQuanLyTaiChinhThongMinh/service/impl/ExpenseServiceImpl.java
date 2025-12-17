@@ -61,7 +61,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public List<ExpenseResponseDTO> getAll() {
-        List<Expense> expenses = expenseRepository.findByUserIdOrderByIdDesc(
+        List<Expense> expenses = expenseRepository.findByUserIdAndDeletedAtIsNullOrderByIdDesc(
                 userService.getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
                         .getId());
         return expenses.stream()
@@ -123,6 +123,78 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         return result;
     }
+
+    @Override
+    public ExpenseResponseDTO getExpense(Long id) {
+
+        User user = userService.getUserByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+        );
+
+        Expense expense = expenseRepository
+                .findByIdAndUser_IdAndDeletedAtIsNull(id, user.getId())
+                .orElseThrow(() -> new RuntimeException("expense.not.found.id." + id));
+
+        return ExpenseResponseDTO.builder()
+                .id(expense.getId())
+                .amount(expense.getAmount())
+                .note(expense.getNote())
+                .spentAt(expense.getSpentAt())
+                .categoryName(expense.getCategory().getName())
+                .createdAt(expense.getCreatedAt())
+                .build();
+    }
+
+    @Override
+    public String deleteExpense(Long id) {
+
+        User user = userService.getUserByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+        );
+
+        Expense expense = expenseRepository
+                .findByIdAndUser_IdAndDeletedAtIsNull(id, user.getId())
+                .orElseThrow(() -> new RuntimeException("expense.not.found"));
+
+        expense.setDeletedAt(LocalDateTime.now());
+        expenseRepository.save(expense);
+
+        return "SUCCESS";
+    }
+
+
+    @Override
+    public String updateExpense(Long id, ExpenseRequestDTO dto) {
+
+        User user = userService.getUserByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+        );
+
+        Expense expense = expenseRepository
+                .findByIdAndUser_IdAndDeletedAtIsNull(id, user.getId())
+                .orElseThrow(() -> new RuntimeException("expense.not.found"));
+
+        Category category = categoryService.getById(dto.getCategoryId());
+
+        LocalDateTime spentAt = dto.getSpentAt();
+        if (spentAt != null && spentAt.isAfter(LocalDateTime.now())) {
+            throw new RuntimeException("error.spent.at");
+        }
+        if (spentAt == null) {
+            spentAt = expense.getSpentAt();
+        }
+
+        expense.setCategory(category);
+        expense.setAmount(dto.getAmount());
+        expense.setNote(dto.getNote());
+        expense.setSpentAt(spentAt);
+        expense.setUpdatedAt(LocalDateTime.now());
+
+        expenseRepository.save(expense);
+
+        return "SUCCESS";
+    }
+
 
 
 }

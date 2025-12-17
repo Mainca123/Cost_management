@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestApiV1
 @RequiredArgsConstructor
 public class UserController {
-//    private final UserService userService;
+    private final UserService userService;
 //
-//    @GetMapping("/user/me")
-//    public ResponseEntity<?> getMe(){
-//        return VsResponseUtil.success(userService.getMe());
-//    }
+    @GetMapping("/user/me")
+    public ResponseEntity<?> getMe(){
+        return VsResponseUtil.success(userService.getMe());
+    }
 //
 //    @PutMapping("/user/me")
 //    public ResponseEntity<?> setMe(@RequestBody @Valid SetUserRequestDTO setUserRequestDTO){

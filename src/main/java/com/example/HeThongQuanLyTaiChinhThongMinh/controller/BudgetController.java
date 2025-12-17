@@ -14,22 +14,51 @@ public class BudgetController {
 
     private final BudgetService budgetService;
 
+    // CREATE
     @PostMapping("/user/budget")
-    public ResponseEntity<?> createBudget(@RequestBody BudgetRequestDTO budgetRequestDTO){
-        return VsResponseUtil.success(budgetService.create(budgetRequestDTO));
+    public ResponseEntity<?> createBudget(
+            @RequestBody BudgetRequestDTO budgetRequestDTO
+    ) {
+        return VsResponseUtil.success(
+                budgetService.create(budgetRequestDTO)
+        );
     }
 
+    // GET ALL
     @GetMapping("/user/budget")
-    public ResponseEntity<?> getAll(){
-        return VsResponseUtil.success(budgetService.getAll());
-    }
-    @GetMapping("/user/budget/sum")
-    public ResponseEntity<?> sum(){
-        return VsResponseUtil.success(budgetService.sumExpenseRemaining());
+    public ResponseEntity<?> getAll() {
+        return VsResponseUtil.success(
+                budgetService.getAll()
+        );
     }
 
-    @PutMapping("/user/budget")
-    public ResponseEntity<?> setBudget(@RequestParam Double amount){
-        return VsResponseUtil.success(budgetService.setAmountLimit(amount));
+    // UPDATE LIMIT
+    @PutMapping("/user/budget/{id}")
+    public ResponseEntity<?> updateBudget(
+            @PathVariable Long id,
+            @RequestBody BudgetRequestDTO request
+    ) {
+        return VsResponseUtil.success(
+                budgetService.setBudget(id, request.getLimitAmount())
+        );
+    }
+
+
+    // DELETE
+    @DeleteMapping("/user/budget/{id}")
+    public ResponseEntity<?> deleteBudget(
+            @PathVariable Long id
+    ) {
+        return VsResponseUtil.success(
+                budgetService.deleteBudget(id)
+        );
+    }
+
+    // REMAINING
+    @GetMapping("/user/budget/sum")
+    public ResponseEntity<?> sum() {
+        return VsResponseUtil.success(
+                budgetService.sumExpenseRemaining()
+        );
     }
 }
